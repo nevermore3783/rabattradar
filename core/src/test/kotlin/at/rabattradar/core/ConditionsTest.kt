@@ -1,5 +1,6 @@
 package at.rabattradar.core
 
+import at.rabattradar.core.i18n.Lang
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.parse.Conditions
@@ -81,6 +82,7 @@ class ConditionsTest {
         // 2026-10-30 is a Friday.
         assertEquals("nur Fr & Sa", Conditions.weekdays(LocalDate.of(2026, 10, 30), LocalDate.of(2026, 10, 31))?.label)
         assertEquals("nur Mo–Mi", Conditions.weekdays(LocalDate.of(2026, 11, 2), LocalDate.of(2026, 11, 4))?.label)
+        assertEquals("Fri & Sat only", Conditions.weekdays(LocalDate.of(2026, 10, 30), LocalDate.of(2026, 10, 31))?.label(Lang.EN))
         assertNull(Conditions.weekdays(LocalDate.of(2026, 10, 29), LocalDate.of(2026, 11, 4)))
     }
 }

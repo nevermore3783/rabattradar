@@ -1,5 +1,6 @@
 package at.rabattradar.core
 
+import at.rabattradar.core.i18n.Lang
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.model.DepositKind
@@ -105,6 +106,16 @@ class DepositsAndBundleTest {
         // 3+3: six items, the package line uses the multi-buy quantity.
         val sixPack = Offer(id = "3", chain = Chain.SPAR, name = "Joghurt", price = 0.5, conditions = listOf(Conditions.multiBuyCondition(3, 3)))
         assertEquals("6 STK. = €3.00", sixPack.infoBar().packageLine)
+
+        // English rendering of the same structured data.
+        val en = milka.infoBar(Lang.EN)
+        assertEquals("2+1 FREE", en.headline)
+        assertEquals("EACH, BUY 3 BARS", en.conditionLine)
+        assertEquals("3 BARS = €9.96", en.packageLine)
+        assertEquals("+€0.25 DEPOSIT", beer.infoBar(Lang.EN).depositLine)
+        assertEquals("EACH FROM 24 CANS", beer.infoBar(Lang.EN).conditionLine)
+        assertEquals("from 24 cans", beer.condition(ConditionType.MIN_QUANTITY)!!.label(Lang.EN))
+        assertEquals("+ 0.25 deposit", beer.condition(ConditionType.DEPOSIT)!!.label(Lang.EN))
 
         val single = Offer(id = "4", chain = Chain.HOFER, name = "Heidelbeeren", price = 1.99)
         assertNull(single.bundle())

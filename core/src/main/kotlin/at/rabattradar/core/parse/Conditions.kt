@@ -1,11 +1,12 @@
 package at.rabattradar.core.parse
 
+import at.rabattradar.core.i18n.Lang
+import at.rabattradar.core.i18n.Texts
 import at.rabattradar.core.model.Chain
+import at.rabattradar.core.model.CondKey
 import at.rabattradar.core.model.Condition
 import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.text.Text
-import at.rabattradar.core.text.euro
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
@@ -54,9 +55,9 @@ object Conditions {
 
     fun multiBuyCondition(buy: Int, free: Int) = Condition(
         type = ConditionType.MULTI_BUY,
-        label = "$buy+$free gratis",
-        detail = "Beim Kauf von ${buy + free} Stück sind $free gratis. Der Aktionspreis je Stück gilt nur, wenn ${buy + free} (oder ein Vielfaches) gekauft werden.",
+        key = CondKey.MULTI_BUY,
         quantity = buy + free,
+        args = mapOf("buy" to "$buy", "free" to "$free"),
     )
 
     /**
@@ -76,10 +77,7 @@ object Conditions {
     /** "Helles*" - an asterisk points to a footnote in the printed flyer. */
     fun footnote(name: String): Condition? =
         if (name.contains('*')) {
-            Condition(
-                ConditionType.NOTE, "Fußnote *",
-                "Im Flugblatt mit * markiert – es gilt eine Fußnote (z. B. nicht in allen Filialen, Pfand, keine weiteren Rabatte). Details im Flugblatt.",
-            )
+            Condition(ConditionType.NOTE, CondKey.FOOTNOTE)
         } else null
 
     /**
@@ -96,14 +94,10 @@ object Conditions {
             // "ab 3.99" etc. never reaches here (needs a unit word); "bei 30 °C" filtered above.
             val word = m.groupValues[1].lowercase()
             val set = perSet ?: (word == "bei")
-            val unit = singularUnit(rawUnit)
-            val label = if (set) "bei $n ${pluralShort(rawUnit, n)}" else "ab $n ${pluralShort(rawUnit, n)}"
-            val detail = if (set) {
-                "Aktionspreis je $unit gilt nur beim Kauf von $n ${pluralShort(rawUnit, n)} (bzw. einem Vielfachen davon). Einzeln gilt der Normalpreis."
-            } else {
-                "Aktionspreis je $unit gilt ab dem Kauf von $n ${pluralShort(rawUnit, n)}. Einzeln gilt der Normalpreis."
-            }
-            return Condition(ConditionType.MIN_QUANTITY, label, detail, quantity = n, unit = unit)
+            return Condition(
+                ConditionType.MIN_QUANTITY, CondKey.MIN_QUANTITY, quantity = n, unit = singularUnit(rawUnit),
+                args = mapOf("set" to "$set", "printed" to pluralShort(rawUnit, n)),
+            )
         }
         return null
     }
@@ -142,41 +136,43 @@ object Conditions {
         if (lidlPlus.containsMatchIn(text)) out += lidlPlusCondition()
         if (sparApp.containsMatchIn(text)) out += sparAppCondition()
         if (pennyApp.containsMatchIn(text)) out += pennyAppCondition()
-        if (billaApp.containsMatchIn(text)) out += Condition(ConditionType.APP_COUPON, "BILLA App", "Preis nur mit Coupon aus der BILLA App.")
+        if (billaApp.containsMatchIn(text)) out += Condition(ConditionType.APP_COUPON, CondKey.BILLA_APP)
         if (joe.containsMatchIn(text)) out += joeCondition(chain)
         return out
     }
 
-    fun lidlPlusCondition(price: Double? = null) = Condition(
-        ConditionType.LOYALTY_APP, "Lidl Plus",
-        "Preis nur mit der Lidl Plus App (Coupon in der App aktivieren und an der Kassa scannen)." +
-            (price?.let { " Mit Lidl Plus: ${it.euro()} €." } ?: ""),
+    private fun priceArgs(price: Double?) = price?.let { mapOf("price" to "$it") }.orEmpty()
+
+    fun lidlPlusCondition(price: Double? = null, exclusive: Boolean = false, highlight: String? = null) = Condition(
+        ConditionType.LOYALTY_APP, CondKey.LIDL_PLUS,
+        args = priceArgs(price) + (if (exclusive) mapOf("exclusive" to "true") else emptyMap()) +
+            (highlight?.let { mapOf("highlight" to it) } ?: emptyMap()),
     )
 
-    fun sparAppCondition(price: Double? = null) = Condition(
-        ConditionType.APP_COUPON, "SPAR App",
-        "Preis nur mit Gutschein aus der SPAR App (Gutschein vorher aktivieren)." + (price?.let { " Mit Gutschein: ${it.euro()} €." } ?: ""),
-    )
+    fun sparAppCondition(price: Double? = null) = Condition(ConditionType.APP_COUPON, CondKey.SPAR_APP, args = priceArgs(price))
 
-    fun pennyAppCondition(price: Double? = null) = Condition(
-        ConditionType.LOYALTY_APP, "PENNY App",
-        "Preis nur mit der PENNY App bzw. jö Karte." + (price?.let { " Mit App/jö: ${it.euro()} €." } ?: ""),
-    )
+    fun pennyAppCondition(price: Double? = null) = Condition(ConditionType.LOYALTY_APP, CondKey.PENNY_APP, args = priceArgs(price))
 
-    fun joeCondition(chain: Chain, price: Double? = null) = Condition(
-        ConditionType.LOYALTY_CARD, "jö",
-        "Preis nur für Mitglieder des jö Bonus Clubs (jö Karte oder jö App an der Kassa vorzeigen)" +
-            (if (chain == Chain.PENNY) " bzw. mit der PENNY App." else ".") + (price?.let { " jö-Preis: ${it.euro()} €." } ?: ""),
-    )
+    fun joeCondition(chain: Chain, price: Double? = null) =
+        Condition(ConditionType.LOYALTY_CARD, CondKey.JOE, args = priceArgs(price) + ("chain" to chain.name))
 
-    fun onlineOnly(text: String): Condition? =
-        if (onlineOnly.containsMatchIn(text)) Condition(ConditionType.ONLINE_ONLY, "nur online", "Nur im Online-Shop erhältlich, nicht in der Filiale.") else null
+    fun onlineOnly(): Condition = Condition(ConditionType.ONLINE_ONLY, CondKey.ONLINE_ONLY)
 
-    fun weightPrice(text: String): Condition? =
-        if (weight.containsMatchIn(text)) Condition(ConditionType.WEIGHT_PRICE, "Preis pro kg", "Preis gilt pro Kilogramm – der Endpreis hängt vom Gewicht ab.") else null
+    fun onlineOnly(text: String): Condition? = if (onlineOnly.containsMatchIn(text)) onlineOnly() else null
+
+    fun weightPrice(): Condition = Condition(ConditionType.WEIGHT_PRICE, CondKey.WEIGHT_PRICE)
+
+    fun weightPrice(text: String): Condition? = if (weight.containsMatchIn(text)) weightPrice() else null
 
     fun variants(text: String): Condition? =
-        if (variants.containsMatchIn(text)) Condition(ConditionType.VARIANTS, "versch. Sorten", "Der Preis gilt für mehrere Sorten/Varianten – nicht jede Sorte ist in jeder Filiale erhältlich.") else null
+        if (variants.containsMatchIn(text)) Condition(ConditionType.VARIANTS, CondKey.VARIANTS) else null
+
+    fun onlineShop(store: String) = Condition(ConditionType.ONLINE_SHOP, CondKey.ONLINE_SHOP, args = mapOf("store" to store))
+
+    fun noDates(store: String) = Condition(ConditionType.NO_DATES, CondKey.NO_DATES, args = mapOf("store" to store))
+
+    fun note(key: CondKey, args: Map<String, String> = emptyMap(), inferred: Boolean = false) =
+        Condition(ConditionType.NOTE, key, inferred = inferred, args = args)
 
     /** All text-derivable conditions. */
     fun fromText(text: String, chain: Chain): List<Condition> = listOfNotNull(
@@ -195,46 +191,25 @@ object Conditions {
         if (regular == null || regular <= price) return null
         if (abs(regular * 2.0 / 3.0 - price) <= 0.011) {
             return Condition(
-                ConditionType.MULTI_BUY, "2+1 gratis?",
-                "Der Preis entspricht genau 2/3 des Normalpreises (${regular.euro()} €). Im Flugblatt steht dann meist „2+1 gratis“ – " +
-                    "der Preis gilt nur beim Kauf von 3 Stück. Die Datenquelle nennt die Bedingung nicht, bitte im Flugblatt prüfen.",
-                inferred = true, quantity = 3,
+                ConditionType.MULTI_BUY, CondKey.MULTI_BUY, inferred = true, quantity = 3,
+                args = mapOf("buy" to "2", "free" to "1", "regular" to "$regular"),
             )
         }
         return null
     }
 
-    private val dayShort = mapOf(
-        DayOfWeek.MONDAY to "Mo", DayOfWeek.TUESDAY to "Di", DayOfWeek.WEDNESDAY to "Mi", DayOfWeek.THURSDAY to "Do",
-        DayOfWeek.FRIDAY to "Fr", DayOfWeek.SATURDAY to "Sa", DayOfWeek.SUNDAY to "So",
-    )
-    private val dayLong = mapOf(
-        DayOfWeek.MONDAY to "Montag", DayOfWeek.TUESDAY to "Dienstag", DayOfWeek.WEDNESDAY to "Mittwoch", DayOfWeek.THURSDAY to "Donnerstag",
-        DayOfWeek.FRIDAY to "Freitag", DayOfWeek.SATURDAY to "Samstag", DayOfWeek.SUNDAY to "Sonntag",
-    )
-
-    fun dayShort(d: LocalDate) = dayShort.getValue(d.dayOfWeek)
-    fun dayLong(d: LocalDate) = dayLong.getValue(d.dayOfWeek)
+    fun dayShort(d: LocalDate) = Texts.dayShort(d, Lang.DE)
+    fun dayLong(d: LocalDate) = Texts.dayLong(d, Lang.DE)
 
     /** Short promotions (1-3 days) are flagged, e.g. "nur Fr & Sa". */
     fun weekdays(from: LocalDate?, to: LocalDate?): Condition? {
         if (from == null || to == null || to.isBefore(from)) return null
         val days = ChronoUnit.DAYS.between(from, to) + 1
         if (days > 3) return null
-        val label = when (days) {
-            1L -> "nur ${dayShort(from)}"
-            2L -> "nur ${dayShort(from)} & ${dayShort(to)}"
-            else -> "nur ${dayShort(from)}–${dayShort(to)}"
-        }
-        val detail = if (days == 1L) {
-            "Aktion gilt nur am ${dayLong(from)}, ${fmt(from)}"
-        } else {
-            "Aktion gilt nur von ${dayLong(from)}, ${fmt(from)} bis ${dayLong(to)}, ${fmt(to)}"
-        }
-        return Condition(ConditionType.WEEKDAYS, label, detail)
+        return Condition(ConditionType.WEEKDAYS, CondKey.WEEKDAYS, args = mapOf("from" to "$from", "to" to "$to"))
     }
 
-    fun fmt(d: LocalDate) = "%02d.%02d.".format(d.dayOfMonth, d.monthValue)
+    fun fmt(d: LocalDate) = Texts.date(d)
 
     /** Keeps the first condition per type (inferred ones only if nothing explicit exists). */
     fun merge(vararg lists: List<Condition>): List<Condition> {
@@ -242,7 +217,7 @@ object Conditions {
         val out = LinkedHashMap<String, Condition>()
         for (c in all.sortedBy { it.inferred }) {
             val key = when (c.type) {
-                ConditionType.LOYALTY_CARD, ConditionType.LOYALTY_APP, ConditionType.APP_COUPON -> "${c.type}:${c.label}"
+                ConditionType.LOYALTY_CARD, ConditionType.LOYALTY_APP, ConditionType.APP_COUPON -> "${c.type}:${c.key}"
                 else -> c.type.name
             }
             if (c.inferred && (c.type == ConditionType.MULTI_BUY || c.type == ConditionType.MIN_QUANTITY) &&

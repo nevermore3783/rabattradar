@@ -1,5 +1,7 @@
 package at.rabattradar.core.model
 
+import at.rabattradar.core.i18n.Lang
+import at.rabattradar.core.i18n.Texts
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -18,16 +20,9 @@ enum class Chain(val displayName: String, val website: String) {
     PENNY("PENNY", "https://www.penny.at/angebote"),
 }
 
-/** Where an offer was scraped from. One merged offer can come from several sources. */
+/** Where an offer was scraped from. One merged offer can come from several sources. Names: [Texts.sourceName]. */
 @Serializable
-enum class SourceId(val displayName: String, val description: String) {
-    MARKTGURU("marktguru.at", "Flugblatt-Angebote (alle Ketten, inkl. HOFER)"),
-    BILLA_SHOP("BILLA Online-Shop", "Strukturierte Aktionen inkl. Mengenrabatte, aber ohne Gültigkeitsdatum"),
-    LIDL_WEB("lidl.at", "Filial-Angebote mit Lidl Plus Preisen und exakten Aktionstagen"),
-    PENNY_WEB("penny.at", "Wochenangebote mit jö/App-Preisen und Mengenrabatten"),
-    SPAR_SHOP("INTERSPAR Online-Shop", "Online-Shop-Aktionen (meist Non-Food und Getränke)"),
-    BILLA_FLYER("BILLA Flugblatt (Text)", "Mengenaktionen wie 3+3 gratis aus dem Text des BILLA/BILLA PLUS Flugblatts"),
-}
+enum class SourceId { MARKTGURU, BILLA_SHOP, LIDL_WEB, PENNY_WEB, SPAR_SHOP, BILLA_FLYER }
 
 @Serializable
 enum class ConditionType {
@@ -74,20 +69,36 @@ enum class ConditionType {
     NOTE,
 }
 
+/** The concrete caveat; text is rendered per language by [Texts]. */
+@Serializable
+enum class CondKey {
+    LIDL_PLUS, SPAR_APP, PENNY_APP, BILLA_APP, JOE, LOYALTY_GENERIC, APP_GENERIC,
+    MULTI_BUY, MIN_QUANTITY, WEEKDAYS, ONLINE_ONLY, ONLINE_SHOP, CLEARANCE, SATTER_RABATT,
+    WEIGHT_PRICE, VARIANTS, DEPOSIT, NO_DATES, FOOTNOTE, CAMPAIGN, ALSO_ONLINE, DATES_ADOPTED,
+}
+
 @Serializable
 data class Condition(
     val type: ConditionType,
-    /** Short chip label, e.g. "Lidl Plus", "2+1 gratis", "ab 2 Stk.". */
-    val label: String,
-    /** Longer explanation for the detail screen. */
-    val detail: String? = null,
+    val key: CondKey,
     /** True when derived heuristically rather than stated by the source. */
     val inferred: Boolean = false,
     /** Minimum quantity for MIN_QUANTITY / MULTI_BUY conditions. */
     val quantity: Int? = null,
-    /** Singular unit word for MIN_QUANTITY ("Tafel", "Pkg."). */
+    /** Singular German unit word for MIN_QUANTITY ("Tafel", "Pkg."). */
     val unit: String? = null,
-)
+    /** Values for the text ("price", "buy", "free", "from", "to", "printed", ...). */
+    val args: Map<String, String> = emptyMap(),
+) {
+    /** Short chip label, e.g. "Lidl Plus", "2+1 gratis", "ab 2 Stk.". */
+    fun label(lang: Lang): String = Texts.label(this, lang)
+
+    /** Longer explanation for the detail screen. */
+    fun detail(lang: Lang): String? = Texts.detail(this, lang)
+
+    val label: String get() = label(Lang.DE)
+    val detail: String? get() = detail(Lang.DE)
+}
 
 @Serializable
 enum class DepositKind { SINGLE_USE, REUSABLE }
@@ -104,9 +115,31 @@ data class Deposit(
     val inferred: Boolean = false,
 )
 
-/** Alternative price shown next to the headline price, e.g. "1 Tafel 4.99" or "ohne Lidl Plus 1.89". */
 @Serializable
-data class PriceTier(val label: String, val price: Double)
+enum class TierKind {
+    /** Price of one item when the headline price needs several ("1 Tafel 4.99", "Einzeln 2.79"). */
+    SINGLE,
+
+    /** Price without the card/app/voucher ("ohne Lidl Plus 1.89"). */
+    WITHOUT,
+
+    /** Lowest price of the last 30 days (EU price indication rule). */
+    LOWEST_30_DAYS,
+}
+
+/** Alternative price shown next to the headline price. */
+@Serializable
+data class PriceTier(
+    val kind: TierKind,
+    val price: Double,
+    /** SINGLE: German singular unit ("Tafel"), null = "Einzeln". */
+    val unit: String? = null,
+    /** WITHOUT: "Lidl Plus", "jö", "voucher" or "app". */
+    val program: String? = null,
+) {
+    fun label(lang: Lang): String = Texts.tier(this, lang)
+    val label: String get() = label(Lang.DE)
+}
 
 @Serializable
 data class Offer(
@@ -148,6 +181,11 @@ data class Offer(
 
     val title: String
         get() = listOfNotNull(displayBrand, name).joinToString(" ")
+
+    /** Size and description without repeating the same text ("0,5 l" from both shop and flyer). */
+    val details: List<String>
+        get() = listOfNotNull(quantity, description).filter { it.isNotBlank() }
+            .distinctBy { it.lowercase().replace(" ", "").replace(',', '.').replace("liter", "l") }
 
     fun has(type: ConditionType) = conditions.any { it.type == type }
 

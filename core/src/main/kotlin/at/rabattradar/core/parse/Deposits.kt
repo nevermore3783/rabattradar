@@ -1,10 +1,10 @@
 package at.rabattradar.core.parse
 
+import at.rabattradar.core.model.CondKey
 import at.rabattradar.core.model.Condition
 import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.model.Deposit
 import at.rabattradar.core.model.DepositKind
-import at.rabattradar.core.text.euro
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -163,27 +163,15 @@ object Deposits {
         return Deposit(k, amount, n)
     }
 
-    fun condition(d: Deposit, price: Double): Condition {
-        val amount = d.amount
-        val label = when {
-            amount == null -> "+ Mehrwegpfand"
-            else -> "+ ${amount.euro()} Pfand" + if (d.inferred) "?" else ""
-        }
-        val what = when (d.kind) {
-            DepositKind.SINGLE_USE -> "Einwegpfand"
-            DepositKind.REUSABLE -> "Mehrwegpfand"
-        }
-        val detail = buildString {
-            if (amount != null) {
-                append("$what: ")
-                if (d.containers > 1) append("${d.containers} × ${(amount / d.containers).euro()} € = ")
-                append("${amount.euro()} € – wird an der Kassa zusätzlich verrechnet und bei Rückgabe erstattet. ")
-                append("Preis inkl. Pfand: ${(price + amount).euro()} €.")
-            } else {
-                append("$what – die Höhe nennt die Quelle nicht (Flaschen und Kisten haben eigene Pfandbeträge).")
+    fun condition(d: Deposit, price: Double): Condition = Condition(
+        ConditionType.DEPOSIT, CondKey.DEPOSIT, inferred = d.inferred,
+        args = buildMap {
+            put("kind", d.kind.name)
+            put("containers", "${d.containers}")
+            d.amount?.let {
+                put("amount", "$it")
+                put("total", "${price + it}")
             }
-            if (d.inferred) append(" Vermutet anhand von Getränkeart, Verpackung und Füllmenge – bitte im Flugblatt prüfen.")
-        }
-        return Condition(ConditionType.DEPOSIT, label, detail, inferred = d.inferred)
-    }
+        },
+    )
 }

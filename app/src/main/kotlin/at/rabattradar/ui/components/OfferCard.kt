@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import at.rabattradar.core.model.Offer
 import at.rabattradar.ui.brand.StoreLogo
 import at.rabattradar.ui.brand.brand
+import at.rabattradar.ui.i18n.LocalStrings
 import at.rabattradar.ui.theme.FlyerFont
 import at.rabattradar.ui.validityShort
 import coil.compose.AsyncImage
@@ -129,9 +130,9 @@ fun OfferCard(
             ) {
                 StoreLogo(offer.chain, banner = offer.banners.firstOrNull(), width = 40.dp, height = 26.dp)
                 Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    validityShort(offer, today)?.let { ValidityPill(it, upcoming = offer.isUpcoming(today)) }
+                    validityShort(offer, today, LocalStrings.current)?.let { ValidityPill(it, upcoming = offer.isUpcoming(today)) }
                     if (favorite) {
-                        Icon(Icons.Filled.Favorite, contentDescription = "Merkliste", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                        Icon(Icons.Filled.Favorite, contentDescription = LocalStrings.current.watchlist, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
                     }
                 }
             }
@@ -147,7 +148,7 @@ fun OfferCard(
                 offer.name, style = MaterialTheme.typography.titleSmall, maxLines = 2, overflow = TextOverflow.Ellipsis,
                 lineHeight = 18.sp,
             )
-            val sub = listOfNotNull(offer.quantity, offer.description).joinToString(" · ")
+            val sub = offer.details.joinToString(" · ")
             if (sub.isNotBlank()) {
                 Text(
                     sub, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,

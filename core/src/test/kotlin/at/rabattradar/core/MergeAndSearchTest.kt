@@ -2,7 +2,7 @@ package at.rabattradar.core
 
 import at.rabattradar.core.merge.OfferMerger
 import at.rabattradar.core.model.Chain
-import at.rabattradar.core.model.Condition
+import at.rabattradar.core.parse.Conditions
 import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.model.Offer
 import at.rabattradar.core.model.SourceId
@@ -23,9 +23,9 @@ class MergeAndSearchTest {
     private fun shop(id: String, name: String, price: Double, brand: String? = "Milka") = Offer(
         id = id, chain = Chain.BILLA, banners = listOf("BILLA"), name = name, brand = brand, price = price, regularPrice = 4.99,
         conditions = listOf(
-            Condition(ConditionType.MIN_QUANTITY, "bei 3 Tafeln", quantity = 3, unit = "Tafel"),
-            Condition(ConditionType.NO_DATES, "Datum unbekannt"),
-            Condition(ConditionType.ONLINE_SHOP, "lt. Online-Shop"),
+            Conditions.minQuantity("bei 3 Tafeln", perSet = true)!!,
+            Conditions.noDates("BILLA"),
+            Conditions.onlineShop("BILLA"),
         ),
         imageUrl = "https://img/$id.jpg", sources = listOf(SourceId.BILLA_SHOP),
     )
@@ -73,7 +73,7 @@ class MergeAndSearchTest {
             Offer(id = "2", chain = Chain.HOFER, name = "Milchschokolade", price = 1.0, validFrom = today.plusDays(2), validTo = today.plusDays(5)),
             Offer(
                 id = "3", chain = Chain.LIDL, name = "Frischkäse", price = 1.24, regularPrice = 1.89, discountPercent = 34,
-                conditions = listOf(Condition(ConditionType.LOYALTY_APP, "Lidl Plus")),
+                conditions = listOf(Conditions.lidlPlusCondition(1.24)),
             ),
             Offer(id = "4", chain = Chain.BILLA, name = "Alter Käse", price = 1.0, validTo = today.minusDays(1)),
         )

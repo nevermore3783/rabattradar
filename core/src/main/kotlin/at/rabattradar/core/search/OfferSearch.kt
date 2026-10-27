@@ -1,19 +1,15 @@
 package at.rabattradar.core.search
 
+import at.rabattradar.core.i18n.Lang
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.model.Offer
 import at.rabattradar.core.text.Text
 import java.time.LocalDate
 
-enum class ValidityFilter(val label: String) { NOW("Jetzt gültig"), UPCOMING("Demnächst"), ALL("Alle") }
+enum class ValidityFilter { NOW, UPCOMING, ALL }
 
-enum class SortOrder(val label: String) {
-    RELEVANCE("Relevanz"),
-    DISCOUNT("Höchster Rabatt"),
-    PRICE("Niedrigster Preis"),
-    ENDING("Endet bald"),
-}
+enum class SortOrder { RELEVANCE, DISCOUNT, PRICE, ENDING }
 
 data class OfferQuery(
     val text: String = "",
@@ -36,7 +32,8 @@ class OfferIndex(val offers: List<Offer>) {
         it.id to " " + Text.fold(
             (
                 listOfNotNull(it.description, it.quantity, it.category, it.chain.displayName, it.banners.joinToString(" ")) +
-                    it.conditions.filterNot { c -> c.inferred }.map { c -> c.label }
+                    // Condition labels in both languages, so "lidl plus", "jö", "gratis" and "free" all work.
+                    it.conditions.filterNot { c -> c.inferred }.flatMap { c -> Lang.entries.map { l -> c.label(l) } }
                 ).joinToString(" "),
         )
     }

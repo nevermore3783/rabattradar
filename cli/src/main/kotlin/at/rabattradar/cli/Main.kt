@@ -2,6 +2,8 @@ package at.rabattradar.cli
 
 import at.rabattradar.core.Aggregator
 import at.rabattradar.core.Snapshot
+import at.rabattradar.core.i18n.Lang
+import at.rabattradar.core.i18n.Texts
 import at.rabattradar.core.model.infoBar
 import at.rabattradar.core.search.OfferIndex
 import at.rabattradar.core.search.OfferQuery
@@ -24,7 +26,7 @@ fun main(args: Array<String>): Unit = runBlocking {
 
     println("Quellen:")
     snapshot.statuses.forEach { s ->
-        println("  %-22s %s %5d Angebote  %5d ms %s".format(s.source.displayName, if (s.ok) "OK " else "ERR", s.count, s.millis, s.error ?: ""))
+        println("  %-22s %s %5d Angebote  %5d ms %s".format(Texts.sourceName(s.source, Lang.DE), if (s.ok) "OK " else "ERR", s.count, s.millis, s.error ?: ""))
     }
     println("\nNach dem Zusammenführen: ${snapshot.offers.size} Angebote")
     snapshot.offers.groupBy { it.chain }.forEach { (chain, list) ->

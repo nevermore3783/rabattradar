@@ -31,6 +31,7 @@ import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.Offer
 import at.rabattradar.core.model.infoBar
 import at.rabattradar.ui.brand.brand
+import at.rabattradar.ui.i18n.LocalStrings
 import at.rabattradar.ui.theme.FlyerFont
 import kotlin.math.roundToInt
 
@@ -45,7 +46,7 @@ private val LoyaltyInk = Color(0xFF1B2A6B)
  */
 @Composable
 fun InfoBarTag(offer: Offer, modifier: Modifier = Modifier, scale: Float = 1f) {
-    val bar = offer.infoBar()
+    val bar = offer.infoBar(LocalStrings.current.lang)
     val brand = offer.chain.brand
     fun s(v: Float): TextUnit = (v * scale).sp
     fun d(v: Float): Dp = (v * scale).dp

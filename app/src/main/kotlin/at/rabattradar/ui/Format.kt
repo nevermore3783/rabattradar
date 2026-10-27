@@ -1,54 +1,48 @@
 package at.rabattradar.ui
 
+import at.rabattradar.core.i18n.Texts
 import at.rabattradar.core.model.Offer
-import at.rabattradar.core.parse.Conditions
+import at.rabattradar.ui.i18n.UiStrings
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import java.util.Locale
 
-fun euro(value: Double): String = String.format(Locale.GERMANY, "%.2f €", value)
-
-/** Short validity label for cards: "bis Mi 28.10.", "ab Do 29.10.", "nur heute". */
-fun validityShort(offer: Offer, today: LocalDate): String? {
+/** Short validity label for cards: "bis Mi 28.10." / "until Wed 28.10.", "ab Do 29.10.", "nur noch heute". */
+fun validityShort(offer: Offer, today: LocalDate, s: UiStrings): String? {
     val from = offer.validFrom
     val to = offer.validTo
     return when {
-        from != null && from.isAfter(today) -> "ab ${Conditions.dayShort(from)} ${Conditions.fmt(from)}"
+        from != null && from.isAfter(today) -> s.from(Texts.dayShort(from, s.lang), Texts.date(from))
         to == null -> null
-        to == today -> "nur noch heute"
-        to == today.plusDays(1) -> "bis morgen"
-        else -> "bis ${Conditions.dayShort(to)} ${Conditions.fmt(to)}"
+        to == today -> s.lastDay
+        to == today.plusDays(1) -> s.untilTomorrow
+        else -> s.until(Texts.dayShort(to, s.lang), Texts.date(to))
     }
 }
 
 /** Long validity text for the detail screen. */
-fun validityLong(offer: Offer, today: LocalDate): String {
+fun validityLong(offer: Offer, s: UiStrings): String {
     val from = offer.validFrom
     val to = offer.validTo
-    fun day(d: LocalDate) = "${Conditions.dayLong(d)}, ${Conditions.fmt(d)}${d.year}"
+    fun day(d: LocalDate) = "${Texts.dayLong(d, s.lang)}, ${Texts.date(d)}${d.year}"
     return when {
         from != null && to != null -> "${day(from)} – ${day(to)}"
-        to != null -> "bis ${day(to)}"
-        from != null -> "ab ${day(from)}"
-        else -> "Zeitraum nicht angegeben"
+        to != null -> s.until("", day(to)).replace("  ", " ")
+        from != null -> s.from("", day(from)).replace("  ", " ")
+        else -> s.noPeriod
     }
 }
 
-fun remainingText(offer: Offer, today: LocalDate): String? {
+fun remainingText(offer: Offer, today: LocalDate, s: UiStrings): String? {
     val from = offer.validFrom
     val to = offer.validTo
     return when {
-        from != null && from.isAfter(today) -> {
-            val d = ChronoUnit.DAYS.between(today, from)
-            if (d == 1L) "startet morgen" else "startet in $d Tagen"
-        }
+        from != null && from.isAfter(today) -> s.startsIn(ChronoUnit.DAYS.between(today, from))
         to != null -> {
             val d = ChronoUnit.DAYS.between(today, to)
             when {
-                d < 0 -> "abgelaufen"
-                d == 0L -> "endet heute"
-                d == 1L -> "noch 2 Tage (bis morgen)"
-                else -> "noch ${d + 1} Tage"
+                d < 0 -> s.expired
+                d == 0L -> s.endsToday
+                else -> s.daysLeft(d)
             }
         }
         else -> null

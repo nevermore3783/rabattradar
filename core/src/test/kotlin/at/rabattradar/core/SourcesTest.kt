@@ -3,6 +3,7 @@ package at.rabattradar.core
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.model.SourceId
+import at.rabattradar.core.model.TierKind
 import at.rabattradar.core.model.infoBar
 import at.rabattradar.core.source.BillaShopSource
 import at.rabattradar.core.source.FetchContext
@@ -71,7 +72,7 @@ class SourcesTest {
 
         val monte = offers.single { it.name == "Monte Maxi" }
         assertEquals("bei 2 Stk.", monte.condition(ConditionType.MIN_QUANTITY)?.label)
-        assertEquals(2.79, monte.tiers.single { it.label == "Einzeln" }.price, 0.001)
+        assertEquals(2.79, monte.tiers.single { it.kind == TierKind.SINGLE }.price, 0.001)
         assertEquals(LocalDate.of(2026, 11, 2), monte.validFrom)
         assertEquals(LocalDate.of(2026, 11, 4), monte.validTo)
 

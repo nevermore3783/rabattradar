@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import at.rabattradar.core.model.Chain
+import at.rabattradar.ui.i18n.AppLanguage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -18,6 +19,7 @@ data class Settings(
     val zipCode: String = "1010",
     val chains: Set<Chain> = Chain.entries.toSet(),
     val includeOnlineShop: Boolean = true,
+    val language: AppLanguage = AppLanguage.SYSTEM,
 )
 
 class SettingsRepository(private val context: Context) {
@@ -25,6 +27,7 @@ class SettingsRepository(private val context: Context) {
     private val disabledChains = stringSetPreferencesKey("disabled_chains")
     private val onlineShop = booleanPreferencesKey("online_shop")
     private val favoriteIds = stringSetPreferencesKey("favorites")
+    private val languageKey = stringPreferencesKey("language")
 
     val settings: Flow<Settings> = context.dataStore.data.map { p ->
         val disabled = p[disabledChains].orEmpty()
@@ -32,6 +35,7 @@ class SettingsRepository(private val context: Context) {
             zipCode = p[zip] ?: "1010",
             chains = Chain.entries.filter { it.name !in disabled }.toSet(),
             includeOnlineShop = p[onlineShop] ?: true,
+            language = p[languageKey]?.let { runCatching { AppLanguage.valueOf(it) }.getOrNull() } ?: AppLanguage.SYSTEM,
         )
     }.distinctUntilChanged()
 
@@ -45,6 +49,8 @@ class SettingsRepository(private val context: Context) {
     }
 
     suspend fun setIncludeOnlineShop(value: Boolean) = context.dataStore.edit { it[onlineShop] = value }
+
+    suspend fun setLanguage(value: AppLanguage) = context.dataStore.edit { it[languageKey] = value.name }
 
     suspend fun toggleFavorite(id: String) = context.dataStore.edit {
         val current = it[favoriteIds].orEmpty()

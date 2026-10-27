@@ -1,5 +1,6 @@
 package at.rabattradar.core.source
 
+import at.rabattradar.core.model.TierKind
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.Condition
 import at.rabattradar.core.model.ConditionType
@@ -51,15 +52,15 @@ class SparShopSource(private val http: Http) : OfferSource {
         val promoText = Text.clean(v["promotion-text"].str)
 
         val conditions = mutableListOf(
-            Condition(ConditionType.ONLINE_SHOP, "Online-Shop", "Aktion im INTERSPAR Online-Shop – in der Filiale können Preis und Sortiment abweichen."),
-            Condition(ConditionType.NO_DATES, "Datum unbekannt", "Der Online-Shop nennt keinen Aktionszeitraum."),
+            Conditions.onlineShop("INTERSPAR"),
+            Conditions.noDates("INTERSPAR"),
         )
         val tiers = mutableListOf<PriceTier>()
         promoText?.let { Conditions.minQuantity(it, perSet = false) }?.let {
             conditions += it
-            if (regular != null) tiers += PriceTier("1 ${it.unit}", regular)
+            if (regular != null) tiers += PriceTier(TierKind.SINGLE, regular, unit = it.unit)
         }
-        if (v["item-type"].str == "WeightProduct") conditions += Conditions.weightPrice("per kg")!!
+        if (v["item-type"].str == "WeightProduct") conditions += Conditions.weightPrice()
 
         val category = v["category-names"].str?.split('|')?.getOrNull(1)?.takeIf { it.isNotBlank() }
         return Offer(

@@ -1,9 +1,10 @@
 package at.rabattradar.core.merge
 
-import at.rabattradar.core.model.Condition
+import at.rabattradar.core.model.CondKey
 import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.model.Offer
 import at.rabattradar.core.model.SourceId
+import at.rabattradar.core.model.TierKind
 import at.rabattradar.core.parse.Conditions
 import at.rabattradar.core.text.Text
 import kotlin.math.abs
@@ -64,7 +65,7 @@ object OfferMerger {
     private fun propagatePromoDates(offers: List<Offer>): List<Offer> {
         fun signature(o: Offer) = listOf(
             o.chain, o.brand?.let(Text::fold), o.price, o.regularPrice, o.tiers.firstOrNull()?.price,
-            o.conditions.filter { it.type == ConditionType.MULTI_BUY || it.type == ConditionType.MIN_QUANTITY }.map { it.label.lowercase() },
+            o.conditions.filter { it.type == ConditionType.MULTI_BUY || it.type == ConditionType.MIN_QUANTITY }.map { it.key to it.quantity },
         )
         val dated = offers.filter { it.validTo != null && it.brand != null }.groupBy(::signature)
         return offers.map { o ->
@@ -75,11 +76,7 @@ object OfferMerger {
                 conditions = Conditions.merge(
                     adopted.conditions,
                     listOf(
-                        Condition(
-                            ConditionType.NOTE, "Zeitraum übernommen",
-                            "Aktionszeitraum vom gleichartigen Flugblatt-Angebot „${source.name}“ übernommen (gleiche Marke, gleicher Preis, gleiche Bedingung).",
-                            inferred = true,
-                        ),
+                        Conditions.note(CondKey.DATES_ADOPTED, mapOf("name" to source.name), inferred = true),
                     ),
                 ),
             )
@@ -102,7 +99,7 @@ object OfferMerger {
         Text.tokens("${o.brand.orEmpty()} ${o.name}").filter { it.length > 1 && it !in stopwords && it.any(Char::isLetter) }.toSet()
 
     private fun prices(o: Offer): Set<Double> =
-        (listOf(o.price) + o.tiers.filter { it.label.startsWith("ohne") }.map { it.price }).toSet()
+        (listOf(o.price) + o.tiers.filter { it.kind == TierKind.WITHOUT }.map { it.price }).toSet()
 
     /** 0..1 similarity, 0 if prices or dates rule a match out. */
     fun score(flyer: Offer, shop: Offer): Double {

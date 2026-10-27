@@ -31,6 +31,7 @@ The colours follow each chain's flyers. Lidl Plus and SPAR App prices get a yell
 - **Package price** for multi-buys: "bei 3 Tafeln je 3.32" shows "3 Tafeln = 9.96 €", and 3+3 shows the price for 6 items. The detail screen adds the deposit and the total at the till ("18,96 € + 6,00 € Pfand = 24,96 €").
 - **Deposit (Pfand)** is added in small print next to the price ("+0,25 € Pfand = 1,04 €") for every eligible item. Multipacks count every container (6 × 0,25 €). See [Deposit rules](#deposit-rules).
 - **Every offer has a picture.** If none is available, or it fails to load, a generated tile in the chain colours is shown instead.
+- **German and English.** Switch under Settings → Sprache / Language (or follow the system language). All texts the app generates are translated: conditions, info bar, dates and explanations. Product names and descriptions come from the shops and stay German.
 - Works offline from the last snapshot. It refreshes automatically when the data is older than 4 h, and on pull-to-refresh.
 - The postal code setting selects regional flyers (e.g. BILLA Wien vs. other states).
 
@@ -42,6 +43,7 @@ Scraping runs **on the phone**, so no server is needed and the requests come fro
 |---|---|---|
 | BILLA / BILLA PLUS | `shop.billa.at/api/product-discovery/products?inPromotion=true` | ~1,100 promotions with structured multi-buy (`promotionText: "Bei 3 Tafeln je"`, `PER_SET_OF`/`FROM`, tags `pt-2plus1`), deposit, lowest 30-day price. **No dates.** |
 | | marktguru flyer offers | Dates and BILLA PLUS-only items. Merged into the shop offers (see below). |
+| | BILLA/BILLA PLUS flyer text (Publitas `spreads.json`) | Multi-buys that marktguru drops ("EXTREM AKTION 3+3 GRATIS, BEI 6 FL. JE"). See below. |
 | SPAR group | marktguru flyer offers | The weekly SPAR/EUROSPAR/INTERSPAR/Gourmet flyer, including the `MIT SPAR-APP-GUTSCHEIN 2,15 €` hint |
 | | INTERSPAR shop search (`search-spar.spar-ics.com`, `is-on-promotion:true`) | Online-shop promotions (mostly wine, drinks and household), flagged as such |
 | HOFER | marktguru flyer offers | The full weekly flyer, including Fr/Sa specials |
@@ -62,6 +64,12 @@ I looked at existing projects before writing the scrapers:
 - **Flyer aggregators** cover all chains. aktionsfinder.at has been offline ("bis auf Weiteres außer Betrieb") since 31 May 2026; marktguru.at works, and its keys are scraped from its homepage at runtime. But marktguru **drops conditions**: the SPAR flyer "1 Pkg. 0,99 – bei 3 Pkg. je 0,66 – 2+1 GRATIS" becomes plain `price 0.66, oldPrice 0.99`. The app counters this in two ways:
   1. **Merging with shop data.** The structured shop offer (BILLA/Lidl/PENNY) wins, and the flyer adds dates, banners and the flyer crop. Matching uses chain, exact price, name tokens and overlapping dates. BILLA's brand-wide promotions ("Milka div. Sorten") pass their flyer dates on to all shop SKUs with the same promotion signature.
   2. **Inference with a visible "?"**. A flyer price of exactly ⅔ of the normal price is shown as **"2+1 GRATIS?"** with an explanation, never as a confirmed condition. A REWE `PER_SET_OF` price that equals 2 of 3 single prices is shown as "2+1 gratis", because that follows exactly from the numbers.
+- **BILLA flyer text.** BILLA and BILLA PLUS host their flyers on Publitas, whose `spreads.json` carries the extracted page text. That text contains every element of the price tag, but two-column layouts interleave neighbouring products ("1 FL. € 2.49 · 1 FL. € 1.99 · 4+2 · 3+3 · BEI 6 FL. JE · BEI 6 FL. JE"), so text order alone is not enough. For each flyer offer the app:
+  1. finds its name on the page;
+  2. takes the "1 FL. € 2.49" line equal to its normal price;
+  3. picks the X+Y label that is arithmetically consistent (1.24 × 6 = 2.49 × 3 → 3+3, not 4+2).
+
+  Price lines and labels are assigned once per page in reading order, so two Sekt offers take the two "1+1" labels and the Eistee next to them gets its "2+2". This recovers about 60 BILLA conditions per week. HOFER, INTERSPAR and Lidl flyers are also on Publitas (Promozilla), but as images without text.
 - [supermarket-deals-at](https://github.com/roehrbacher/supermarket-deals-at) (aktionsradar.at + Lidl/BILLA APIs) and [Nightdreams-bat/supermarket-deals](https://github.com/Nightdreams-bat/supermarket-deals) (marktguru) confirmed the endpoints and the "query the banner name to get the whole flyer" trick.
 
 A live run (27 Oct 2026, PLZ 1010) gave about **3,850 merged offers**, all with a picture:

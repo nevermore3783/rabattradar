@@ -37,25 +37,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import at.rabattradar.core.model.Condition
 import at.rabattradar.core.model.ConditionType
+import at.rabattradar.ui.i18n.LocalStrings
 
-data class ConditionStyle(val icon: ImageVector, val bg: Color, val fg: Color, val title: String)
+data class ConditionStyle(val icon: ImageVector, val bg: Color, val fg: Color)
 
-/** Icon, colour and section title per condition type. */
+/** Icon and colour per condition type (titles: [at.rabattradar.ui.i18n.UiStrings.conditionTitle]). */
 fun ConditionType.style(): ConditionStyle = when (this) {
-    ConditionType.LOYALTY_APP -> ConditionStyle(Icons.Filled.PhoneAndroid, Color(0xFFFFF3B0), Color(0xFF3D3200), "App-Preis")
-    ConditionType.LOYALTY_CARD -> ConditionStyle(Icons.Filled.CreditCard, Color(0xFFFFE2B8), Color(0xFF4A2800), "Kundenkarte")
-    ConditionType.APP_COUPON -> ConditionStyle(Icons.Filled.ConfirmationNumber, Color(0xFFD5F2DF), Color(0xFF00391A), "App-Gutschein")
-    ConditionType.MULTI_BUY -> ConditionStyle(Icons.Filled.LibraryAdd, Color(0xFFFFD9DC), Color(0xFF5C0010), "Mengenaktion")
-    ConditionType.MIN_QUANTITY -> ConditionStyle(Icons.Filled.Layers, Color(0xFFFFD9DC), Color(0xFF5C0010), "Mindestmenge")
-    ConditionType.WEEKDAYS -> ConditionStyle(Icons.Filled.Event, Color(0xFFDCE6FF), Color(0xFF0F2A66), "Nur an bestimmten Tagen")
-    ConditionType.ONLINE_ONLY -> ConditionStyle(Icons.Filled.Language, Color(0xFFE6E0F8), Color(0xFF2D1F66), "Nur online")
-    ConditionType.ONLINE_SHOP -> ConditionStyle(Icons.Filled.ShoppingCart, Color(0xFFE9EBEF), Color(0xFF2B3440), "Online-Shop-Daten")
-    ConditionType.CLEARANCE -> ConditionStyle(Icons.Filled.Sell, Color(0xFFFFE0CC), Color(0xFF552000), "Abverkauf")
-    ConditionType.WEIGHT_PRICE -> ConditionStyle(Icons.Filled.Scale, Color(0xFFE9EBEF), Color(0xFF2B3440), "Gewichtspreis")
-    ConditionType.DEPOSIT -> ConditionStyle(Icons.Filled.Recycling, Color(0xFFE0F2EE), Color(0xFF003D33), "Pfand")
-    ConditionType.VARIANTS -> ConditionStyle(Icons.Filled.Category, Color(0xFFE9EBEF), Color(0xFF2B3440), "Sorten")
-    ConditionType.NO_DATES -> ConditionStyle(Icons.Filled.EventBusy, Color(0xFFE9EBEF), Color(0xFF2B3440), "Zeitraum")
-    ConditionType.NOTE -> ConditionStyle(Icons.Filled.Info, Color(0xFFE9EBEF), Color(0xFF2B3440), "Hinweis")
+    ConditionType.LOYALTY_APP -> ConditionStyle(Icons.Filled.PhoneAndroid, Color(0xFFFFF3B0), Color(0xFF3D3200))
+    ConditionType.LOYALTY_CARD -> ConditionStyle(Icons.Filled.CreditCard, Color(0xFFFFE2B8), Color(0xFF4A2800))
+    ConditionType.APP_COUPON -> ConditionStyle(Icons.Filled.ConfirmationNumber, Color(0xFFD5F2DF), Color(0xFF00391A))
+    ConditionType.MULTI_BUY -> ConditionStyle(Icons.Filled.LibraryAdd, Color(0xFFFFD9DC), Color(0xFF5C0010))
+    ConditionType.MIN_QUANTITY -> ConditionStyle(Icons.Filled.Layers, Color(0xFFFFD9DC), Color(0xFF5C0010))
+    ConditionType.WEEKDAYS -> ConditionStyle(Icons.Filled.Event, Color(0xFFDCE6FF), Color(0xFF0F2A66))
+    ConditionType.ONLINE_ONLY -> ConditionStyle(Icons.Filled.Language, Color(0xFFE6E0F8), Color(0xFF2D1F66))
+    ConditionType.ONLINE_SHOP -> ConditionStyle(Icons.Filled.ShoppingCart, Color(0xFFE9EBEF), Color(0xFF2B3440))
+    ConditionType.CLEARANCE -> ConditionStyle(Icons.Filled.Sell, Color(0xFFFFE0CC), Color(0xFF552000))
+    ConditionType.WEIGHT_PRICE -> ConditionStyle(Icons.Filled.Scale, Color(0xFFE9EBEF), Color(0xFF2B3440))
+    ConditionType.DEPOSIT -> ConditionStyle(Icons.Filled.Recycling, Color(0xFFE0F2EE), Color(0xFF003D33))
+    ConditionType.VARIANTS -> ConditionStyle(Icons.Filled.Category, Color(0xFFE9EBEF), Color(0xFF2B3440))
+    ConditionType.NO_DATES -> ConditionStyle(Icons.Filled.EventBusy, Color(0xFFE9EBEF), Color(0xFF2B3440))
+    ConditionType.NOTE -> ConditionStyle(Icons.Filled.Info, Color(0xFFE9EBEF), Color(0xFF2B3440))
 }
 
 /** Conditions that matter when deciding whether the price applies to you. */
@@ -79,7 +80,7 @@ fun ConditionChip(condition: Condition, modifier: Modifier = Modifier) {
     ) {
         Icon(style.icon, contentDescription = null, tint = if (condition.inferred) MaterialTheme.colorScheme.onSurfaceVariant else style.fg, modifier = Modifier.size(12.dp))
         Text(
-            condition.label,
+            condition.label(LocalStrings.current.lang),
             color = if (condition.inferred) MaterialTheme.colorScheme.onSurfaceVariant else style.fg,
             fontSize = 11.sp,
             lineHeight = 13.sp,

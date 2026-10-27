@@ -1,5 +1,7 @@
 package at.rabattradar.core.source
 
+import at.rabattradar.core.model.TierKind
+import at.rabattradar.core.model.CondKey
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.Condition
 import at.rabattradar.core.model.ConditionType
@@ -141,12 +143,12 @@ class MarktguruSource(
                     conditions += Conditions.joeCondition(chain, hint.price)
                     if ("APP" in p) conditions += Conditions.pennyAppCondition(hint.price)
                 }
-                "ONLINE" in p -> conditions += Condition(ConditionType.ONLINE_ONLY, "nur online", "Nur im Online-Shop erhältlich, nicht in der Filiale.")
-                "APP" in p -> conditions += Condition(ConditionType.APP_COUPON, "App", "Preis nur mit der App des Händlers.")
+                "ONLINE" in p -> conditions += Conditions.onlineOnly()
+                "APP" in p -> conditions += Condition(ConditionType.APP_COUPON, CondKey.APP_GENERIC)
             }
             // "MIT LIDL PLUS APP 0.49 €": the shown price is the normal promo price, the hint the member price.
             if (hint.price != null && hint.price < headline) {
-                tiers += PriceTier(if ("SPAR" in p) "ohne Gutschein" else "ohne App", headline)
+                tiers += PriceTier(TierKind.WITHOUT, headline, program = if ("SPAR" in p) "voucher" else if ("LIDL" in p) "Lidl Plus" else "app")
                 headline = hint.price
             }
         }
@@ -154,7 +156,7 @@ class MarktguruSource(
             conditions += when (chain) {
                 Chain.LIDL -> Conditions.lidlPlusCondition()
                 Chain.PENNY, Chain.BILLA -> Conditions.joeCondition(chain)
-                else -> Condition(ConditionType.LOYALTY_CARD, "Kundenkarte", "Preis nur mit Kundenkarte/App des Händlers.")
+                else -> Condition(ConditionType.LOYALTY_CARD, CondKey.LOYALTY_GENERIC)
             }
         }
         conditions += Conditions.fromText(text, chain)

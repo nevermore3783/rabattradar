@@ -12,17 +12,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import at.rabattradar.core.Snapshot
+import at.rabattradar.core.i18n.Lang
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.model.DepositKind
 import at.rabattradar.core.model.Offer
 import at.rabattradar.core.model.PriceTier
+import at.rabattradar.core.model.TierKind
 import at.rabattradar.core.model.SourceId
 import at.rabattradar.core.net.OkHttp
 import at.rabattradar.core.parse.Conditions
@@ -38,6 +42,8 @@ import at.rabattradar.ui.detail.DetailScreen
 import at.rabattradar.ui.home.HomeActions
 import at.rabattradar.ui.home.HomeContent
 import at.rabattradar.ui.home.HomeUiState
+import at.rabattradar.ui.i18n.LocalStrings
+import at.rabattradar.ui.i18n.stringsFor
 import at.rabattradar.ui.theme.RabattRadarTheme
 import coil.Coil
 import coil.ImageLoader
@@ -86,11 +92,23 @@ class ScreenshotTest {
         Coil.setImageLoader(ImageLoader.Builder(ApplicationProvider.getApplicationContext()).components { add(engine) }.build())
     }
 
+    @Composable
+    private fun Themed(lang: Lang = Lang.DE, dark: Boolean = false, content: @Composable () -> Unit) {
+        CompositionLocalProvider(LocalStrings provides stringsFor(lang)) {
+            RabattRadarTheme(dark = dark, content = content)
+        }
+    }
+
     @Test
-    fun infoBarVariants() {
+    fun infoBarVariantsEnglish() = infoBarVariants(Lang.EN, "info_bar_variants_en.png")
+
+    @Test
+    fun infoBarVariants() = infoBarVariants(Lang.DE, "info_bar_variants.png")
+
+    private fun infoBarVariants(lang: Lang, file: String) {
         installImages(emptyMap())
         compose.setContent {
-            RabattRadarTheme(dark = false) {
+            Themed(lang) {
                 Column(
                     Modifier.background(MaterialTheme.colorScheme.background).padding(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -103,7 +121,7 @@ class ScreenshotTest {
                 }
             }
         }
-        compose.onRoot().captureRoboImage("$out/info_bar_variants.png")
+        compose.onRoot().captureRoboImage("$out/$file")
     }
 
     // --- Real data ---------------------------------------------------------------------------------------
@@ -161,14 +179,19 @@ class ScreenshotTest {
     }
 
     @Test
-    fun showcaseHome() {
+    fun showcaseHome() = showcaseHome(Lang.DE, "showcase_home.png")
+
+    @Test
+    fun showcaseHomeEnglish() = showcaseHome(Lang.EN, "showcase_home_en.png")
+
+    private fun showcaseHome(lang: Lang, file: String) {
         val s = snapshot()
         assumeTrue("set -Drabattradar.snapshot=<file> to render real data", s != null)
         val offers = pick(s!!)
         installImages(download(offers.mapNotNull { it.imageUrl } + logoUrls()))
         val counts = s.offers.filter { it.isActiveOn(today) }.groupingBy { it.chain }.eachCount()
         compose.setContent {
-            RabattRadarTheme(dark = false) {
+            Themed(lang) {
                 HomeContent(
                     state = HomeUiState(
                         loading = false, offers = offers, chainCounts = counts, fetchedAt = System.currentTimeMillis() - 12 * 60_000,
@@ -181,7 +204,7 @@ class ScreenshotTest {
                 )
             }
         }
-        compose.onRoot().captureRoboImage("$out/showcase_home.png")
+        compose.onRoot().captureRoboImage("$out/$file")
     }
 
     @Test
@@ -221,18 +244,40 @@ class ScreenshotTest {
 
     @Test
     @Config(qualifiers = "w412dp-h2600dp-xxhdpi")
-    fun showcaseDetailDepositPackage() {
+    fun showcaseDetailDepositPackage() = showcaseDetailDeposit(Lang.DE, "showcase_detail_deposit.png")
+
+    @Test
+    @Config(qualifiers = "w412dp-h2600dp-xxhdpi")
+    fun showcaseDetailDepositEnglish() = showcaseDetailDeposit(Lang.EN, "showcase_detail_deposit_en.png")
+
+    private fun showcaseDetailDeposit(lang: Lang, file: String) {
         val s = snapshot()
         assumeTrue(s != null)
         val offer = s!!.offers.filter { it.deposit?.amount != null && it.bundle() != null && !it.deposit!!.inferred }
             .maxByOrNull { it.bundle()!!.quantity } ?: return
         installImages(download(listOfNotNull(offer.imageUrl, offer.flyerImageUrl) + logoUrls()))
         compose.setContent {
-            RabattRadarTheme(dark = false) {
+            Themed(lang) {
                 DetailScreen(offer = offer, today = today, favorite = false, onBack = {}, onToggleFavorite = {})
             }
         }
-        compose.onRoot().captureRoboImage("$out/showcase_detail_deposit.png")
+        compose.onRoot().captureRoboImage("$out/$file")
+    }
+
+    @Test
+    @Config(qualifiers = "w412dp-h2600dp-xxhdpi")
+    fun showcaseDetailBillaFlyer() {
+        val s = snapshot()
+        assumeTrue(s != null)
+        val offer = s!!.offers.firstOrNull { SourceId.BILLA_FLYER in it.sources && it.brand == "Coca-Cola" && it.price == 1.24 }
+            ?: s.offers.first { SourceId.BILLA_FLYER in it.sources }
+        installImages(download(listOfNotNull(offer.imageUrl, offer.flyerImageUrl) + logoUrls()))
+        compose.setContent {
+            Themed(Lang.DE, dark = true) {
+                DetailScreen(offer = offer, today = today, favorite = false, onBack = {}, onToggleFavorite = {})
+            }
+        }
+        compose.onRoot().captureRoboImage("$out/showcase_detail_billa_flyer.png")
     }
 
     @Test
@@ -256,7 +301,7 @@ class ScreenshotTest {
         Offer(
             id = "1", chain = Chain.BILLA, banners = listOf("BILLA", "BILLA PLUS"), name = "Milka Alpenmilch", brand = "Milka",
             quantity = "270 g", price = 3.32, regularPrice = 4.99, discountPercent = 33,
-            tiers = listOf(PriceTier("1 Tafel", 4.99)),
+            tiers = listOf(PriceTier(TierKind.SINGLE, 4.99, unit = "Tafel")),
             conditions = listOf(
                 Conditions.multiBuyCondition(2, 1).copy(unit = "Tafel"),
                 Conditions.minQuantity("Bei 3 Tafeln je", perSet = true)!!,
@@ -265,18 +310,18 @@ class ScreenshotTest {
         ),
         Offer(
             id = "2", chain = Chain.LIDL, banners = listOf("Lidl"), name = "Frischkäse", brand = "Philadelphia", quantity = "175 g",
-            price = 1.24, regularPrice = 1.89, discountPercent = 34, tiers = listOf(PriceTier("ohne Lidl Plus", 1.69)),
+            price = 1.24, regularPrice = 1.89, discountPercent = 34, tiers = listOf(PriceTier(TierKind.WITHOUT, 1.69, program = "Lidl Plus")),
             conditions = listOf(Conditions.lidlPlusCondition(1.24)), validFrom = today, validTo = today.plusDays(1),
         ),
         Offer(
             id = "3", chain = Chain.PENNY, banners = listOf("PENNY"), name = "Frischkäse Knoblauch", quantity = "150 g",
-            price = 1.49, regularPrice = 2.59, tiers = listOf(PriceTier("1 Becher", 2.59), PriceTier("ohne jö", 1.72)),
+            price = 1.49, regularPrice = 2.59, tiers = listOf(PriceTier(TierKind.SINGLE, 2.59, unit = "Becher"), PriceTier(TierKind.WITHOUT, 1.72, program = "jö")),
             conditions = listOf(Conditions.joeCondition(Chain.PENNY, 1.49), Conditions.minQuantity("bei 3 Becher")!!),
             validFrom = today.minusDays(5), validTo = today.plusDays(1),
         ),
         Offer(
             id = "4", chain = Chain.SPAR, banners = listOf("SPAR", "EUROSPAR"), name = "Bio-Roggenbrot", description = "500 g",
-            price = 2.15, regularPrice = 2.37, tiers = listOf(PriceTier("ohne Gutschein", 2.37)), discountPercent = 9,
+            price = 2.15, regularPrice = 2.37, tiers = listOf(PriceTier(TierKind.WITHOUT, 2.37, program = "voucher")), discountPercent = 9,
             conditions = listOf(Conditions.sparAppCondition(2.15)), validFrom = today.minusDays(6), validTo = today.plusDays(8),
         ),
         Offer(
@@ -292,13 +337,13 @@ class ScreenshotTest {
         ),
         Offer(
             id = "7", chain = Chain.PENNY, banners = listOf("PENNY"), name = "Wieselburger Gold", quantity = "0,5 l Dose",
-            price = 0.79, regularPrice = 1.45, discountPercent = 46, tiers = listOf(PriceTier("1 Dose", 1.45)),
+            price = 0.79, regularPrice = 1.45, discountPercent = 46, tiers = listOf(PriceTier(TierKind.SINGLE, 1.45, unit = "Dose")),
             conditions = listOf(Conditions.minQuantity("ab 24 Dosen")!!),
             validFrom = today.minusDays(5), validTo = today.plusDays(1),
         ).withDeposit(Deposits.detect("0,5 l Dose Bier", DepositKind.SINGLE_USE)),
         Offer(
             id = "8", chain = Chain.LIDL, banners = listOf("Lidl"), name = "Monte Maxi", quantity = "4x 100 g", price = 1.39,
-            regularPrice = 2.79, discountPercent = 50, tiers = listOf(PriceTier("Einzeln", 2.79)),
+            regularPrice = 2.79, discountPercent = 50, tiers = listOf(PriceTier(TierKind.SINGLE, 2.79)),
             conditions = listOf(Conditions.minQuantity("Bei 2 Stk. je")!!), validFrom = today.plusDays(6), validTo = today.plusDays(8),
         ),
     )

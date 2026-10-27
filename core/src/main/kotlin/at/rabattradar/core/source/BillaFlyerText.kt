@@ -1,5 +1,6 @@
 package at.rabattradar.core.source
 
+import at.rabattradar.core.model.TierKind
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.model.Offer
@@ -193,8 +194,8 @@ class BillaFlyerText(private val http: Http) {
             val unitText = titleUnit(unitRaw)
             val minQty = Conditions.minQuantity("${if (perSet) "bei" else "ab"} $n $unitText", perSet = perSet)
             val multi = if (buy != null && free != null) Conditions.multiBuyCondition(buy, free).copy(unit = minQty?.unit) else null
-            val tiers = if (offer.tiers.none { it.label.startsWith("1 ") }) {
-                listOf(PriceTier("1 ${minQty?.unit ?: "Stk."}", single)) + offer.tiers
+            val tiers = if (offer.tiers.none { it.kind == TierKind.SINGLE }) {
+                listOf(PriceTier(TierKind.SINGLE, single, unit = minQty?.unit ?: "Stk.")) + offer.tiers
             } else offer.tiers
             return offer.copy(
                 conditions = Conditions.merge(

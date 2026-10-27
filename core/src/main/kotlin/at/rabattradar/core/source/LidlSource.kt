@@ -1,5 +1,7 @@
 package at.rabattradar.core.source
 
+import at.rabattradar.core.model.TierKind
+import at.rabattradar.core.model.CondKey
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.Condition
 import at.rabattradar.core.model.ConditionType
@@ -65,20 +67,14 @@ class LidlSource(private val http: Http) : OfferSource {
         val single = parts.firstOrNull { it.startsWith("Einzeln") }?.let(Text::parsePrice)
 
         packaging?.let { Conditions.minQuantity(it) }?.let { conditions += it }
-        if (single != null && single > price) tiers += PriceTier("Einzeln", single)
+        if (single != null && single > price) tiers += PriceTier(TierKind.SINGLE, single)
 
         val oldPrice = p["oldPrice"].dbl ?: p["discount"]["deletedPrice"].dbl
         var headline = price
         if (plusPrice != null && plusPrice <= price) {
-            val highlight = lidlPlus["highlightText"].str?.let { " Vorteil laut Lidl: $it." } ?: ""
-            val base = Conditions.lidlPlusCondition(plusPrice)
-            conditions += if (plusOnly) {
-                base.copy(detail = "Lidl Plus exklusiv – ohne Lidl Plus App gibt es diesen Aktionspreis nicht.$highlight")
-            } else {
-                base.copy(detail = base.detail + highlight)
-            }
+            conditions += Conditions.lidlPlusCondition(plusPrice, exclusive = plusOnly, highlight = lidlPlus["highlightText"].str)
             if (plusPrice < price) {
-                tiers += PriceTier("ohne Lidl Plus", price)
+                tiers += PriceTier(TierKind.WITHOUT, price, program = "Lidl Plus")
                 headline = plusPrice
             }
         }
@@ -92,10 +88,10 @@ class LidlSource(private val http: Http) : OfferSource {
         val validTo = g["storeEndDate"].lng?.let(::epochSecondsToDate)
         Conditions.weekdays(validFrom, validTo)?.let { conditions += it }
         if (g["stockAvailability"]["onlineAvailable"].bool == true) {
-            conditions += Condition(ConditionType.NOTE, "auch online", "Auch im Lidl Online-Shop erhältlich (Online-Preise und Versandkosten können abweichen).")
+            conditions += Conditions.note(CondKey.ALSO_ONLINE)
         }
 
-        val regular = (oldPrice ?: tiers.firstOrNull { it.label.startsWith("ohne") }?.price)?.takeIf { it > headline }
+        val regular = (oldPrice ?: tiers.firstOrNull { it.kind == TierKind.WITHOUT }?.price)?.takeIf { it > headline }
         val discount = regular?.let { ((1 - headline / it) * 100).roundToInt() }?.takeIf { it in 1..95 }
 
         val image = g["imageList_V2"][0]["variants"].arr.firstOrNull { it["ratio"].str == "4:3" }?.get("sizes")?.get("mediumUrl").str

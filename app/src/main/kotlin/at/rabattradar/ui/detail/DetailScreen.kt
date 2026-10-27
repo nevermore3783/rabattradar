@@ -53,13 +53,15 @@ import at.rabattradar.core.model.ConditionType
 import at.rabattradar.core.model.Bundle
 import at.rabattradar.core.model.Offer
 import at.rabattradar.core.model.bundle
-import at.rabattradar.core.text.euro
+import at.rabattradar.core.i18n.Texts
 import at.rabattradar.ui.brand.StoreLogo
 import at.rabattradar.ui.brand.brand
 import at.rabattradar.ui.components.OfferImage
 import at.rabattradar.ui.components.ValidityPill
 import at.rabattradar.ui.components.style
 import at.rabattradar.ui.remainingText
+import at.rabattradar.ui.i18n.LocalStrings
+import at.rabattradar.ui.i18n.UiStrings
 import at.rabattradar.ui.theme.FlyerFont
 import at.rabattradar.ui.validityLong
 import at.rabattradar.ui.validityShort
@@ -75,26 +77,27 @@ fun DetailScreen(
     onToggleFavorite: () -> Unit,
 ) {
     val context = LocalContext.current
+    val str = LocalStrings.current
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(offer?.chain?.displayName ?: "", maxLines = 1) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Zurück") } },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, str.back) } },
                 actions = {
                     if (offer != null) {
                         IconButton(onClick = onToggleFavorite) {
                             Icon(
                                 if (favorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                                if (favorite) "Von Merkliste entfernen" else "Auf Merkliste",
+                                if (favorite) str.removeFromWatchlist else str.addToWatchlist,
                                 tint = if (favorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                             )
                         }
                         IconButton(onClick = {
-                            val text = shareText(offer, today)
+                            val text = shareText(offer, today, str)
                             context.startActivity(
                                 Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text), null),
                             )
-                        }) { Icon(Icons.Filled.Share, "Teilen") }
+                        }) { Icon(Icons.Filled.Share, str.share) }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -103,7 +106,7 @@ fun DetailScreen(
     ) { padding ->
         if (offer == null) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text("Angebot nicht mehr verfügbar", style = MaterialTheme.typography.titleMedium)
+                Text(str.offerGone, style = MaterialTheme.typography.titleMedium)
             }
             return@Scaffold
         }
@@ -137,11 +140,10 @@ fun DetailScreen(
                 ) {
                     Icon(Icons.AutoMirrored.Filled.OpenInNew, null, Modifier.size(18.dp))
                     Spacer(Modifier.size(8.dp))
-                    Text(if (offer.url != null) "Beim Händler ansehen" else "Aktuelle Angebote von ${offer.chain.displayName}")
+                    Text(if (offer.url != null) str.viewAtStore else str.storeOffers(offer.chain))
                 }
                 Text(
-                    "Alle Angaben ohne Gewähr. Preise und Bedingungen werden automatisch aus Flugblättern und Online-Shops gelesen – " +
-                        "maßgeblich ist das Flugblatt bzw. der Preis an der Kassa. Solange der Vorrat reicht.",
+                    str.disclaimer,
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(8.dp))
@@ -156,13 +158,13 @@ private fun StoreRow(offer: Offer, today: LocalDate) {
         StoreLogo(offer.chain, banner = offer.banners.firstOrNull(), width = 64.dp, height = 42.dp)
         Spacer(Modifier.size(12.dp))
         Column(Modifier.weight(1f)) {
-            Text("Gültig bei", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(LocalStrings.current.validAt, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(
                 offer.banners.ifEmpty { listOf(offer.chain.displayName) }.joinToString(", "),
                 style = MaterialTheme.typography.titleSmall,
             )
         }
-        validityShort(offer, today)?.let { ValidityPill(it, upcoming = offer.isUpcoming(today)) }
+        validityShort(offer, today, LocalStrings.current)?.let { ValidityPill(it, upcoming = offer.isUpcoming(today)) }
     }
 }
 
@@ -173,7 +175,7 @@ private fun Titles(offer: Offer) {
             Text(it.uppercase(), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Text(offer.name, style = MaterialTheme.typography.headlineSmall)
-        listOfNotNull(offer.quantity, offer.description, offer.category).filter { it.isNotBlank() }.forEach {
+        (offer.details + listOfNotNull(offer.category)).forEach {
             Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
@@ -181,20 +183,22 @@ private fun Titles(offer: Offer) {
 
 @Composable
 private fun PriceBlock(offer: Offer) {
+    val str = LocalStrings.current
     val color = offer.chain.brand.price
     Surface(shape = RoundedCornerShape(16.dp), color = MaterialTheme.colorScheme.surfaceContainer) {
         Column(Modifier.fillMaxWidth().padding(16.dp)) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
-                    "${offer.price.euro()} €",
-                    fontFamily = FlyerFont, fontWeight = FontWeight.Black, fontSize = 40.sp, lineHeight = 40.sp,
+                    str.money(offer.price),
+                    fontFamily = FlyerFont, fontWeight = FontWeight.Black, fontSize = 40.sp, lineHeight = 40.sp, maxLines = 1, softWrap = false,
                     color = if (MaterialTheme.colorScheme.background.luminanceIsDark()) MaterialTheme.colorScheme.primary else color,
                 )
                 Spacer(Modifier.size(10.dp))
-                Column(Modifier.padding(bottom = 4.dp)) {
+                // The text column takes the flexible width, so the discount badge never gets squeezed.
+                Column(Modifier.weight(1f).padding(bottom = 4.dp)) {
                     offer.regularPrice?.let {
                         Text(
-                            "${it.euro()} €",
+                            str.money(it),
                             style = MaterialTheme.typography.titleMedium,
                             textDecoration = TextDecoration.LineThrough,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -202,10 +206,11 @@ private fun PriceBlock(offer: Offer) {
                     }
                     DepositSmallPrint(offer)
                 }
-                Spacer(Modifier.weight(1f))
+                Spacer(Modifier.size(8.dp))
                 offer.discountPercent?.let {
                     Text(
                         "-$it%",
+                        maxLines = 1, softWrap = false,
                         color = Color.White, fontFamily = FlyerFont, fontWeight = FontWeight.Black, fontSize = 22.sp,
                         modifier = Modifier.background(Color(0xFFE2001A), RoundedCornerShape(8.dp)).padding(horizontal = 10.dp, vertical = 2.dp),
                     )
@@ -216,21 +221,21 @@ private fun PriceBlock(offer: Offer) {
             }
             if (headlineNeeds.isNotEmpty()) {
                 Text(
-                    "Preis gilt nur: " + headlineNeeds.joinToString(" + ") { it.label },
+                    str.priceOnlyWith + headlineNeeds.joinToString(" + ") { it.label(str.lang) },
                     style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(top = 4.dp),
                 )
             }
-            offer.bundle()?.let { PackagePrice(it, color) }
+            offer.bundle(str.lang)?.let { PackagePrice(it, color) }
             offer.unitPrice?.let {
-                Text("Grundpreis: $it €", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
+                Text("${str.unitPrice}: $it €", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp))
             }
             if (offer.tiers.isNotEmpty()) {
                 HorizontalDivider(Modifier.padding(vertical = 10.dp))
                 offer.tiers.forEach { tier ->
                     Row(Modifier.fillMaxWidth().padding(vertical = 2.dp)) {
-                        Text(tier.label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                        Text("${tier.price.euro()} €", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+                        Text(tier.label(str.lang), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                        Text(str.money(tier.price), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
                     }
                 }
             }
@@ -242,14 +247,16 @@ private fun PriceBlock(offer: Offer) {
 @Composable
 private fun DepositSmallPrint(offer: Offer) {
     val d = offer.deposit ?: return
-    val mark = if (d.inferred) " (vermutet)" else ""
-    val text = d.amount?.let { "+ ${it.euro()} € Pfand = ${(offer.price + it).euro()} €$mark" } ?: "+ Mehrwegpfand$mark"
+    val str = LocalStrings.current
+    val mark = if (d.inferred) " ${str.inferred}" else ""
+    val text = (d.amount?.let { str.depositSmall(it, offer.price + it) } ?: str.returnableDeposit) + mark
     Text(text, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 /** What a multi-buy really costs: "Paketpreis 3 Tafeln 9,96 €". */
 @Composable
 private fun PackagePrice(bundle: Bundle, color: Color) {
+    val str = LocalStrings.current
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surface,
@@ -258,26 +265,26 @@ private fun PackagePrice(bundle: Bundle, color: Color) {
         Column(Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("Paketpreis", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(str.packagePrice, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
-                        bundle.label + if (bundle.inferred) " (vermutet)" else "",
+                        bundle.label + if (bundle.inferred) " ${str.inferred}" else "",
                         style = MaterialTheme.typography.titleSmall,
                     )
                 }
                 Text(
-                    "${bundle.price.euro()} €",
+                    str.money(bundle.price),
                     fontFamily = FlyerFont, fontWeight = FontWeight.Black, fontSize = 26.sp,
                     color = if (MaterialTheme.colorScheme.background.luminanceIsDark()) MaterialTheme.colorScheme.primary else color,
                 )
             }
             bundle.deposit?.let {
                 Text(
-                    "+ ${it.euro()} € Pfand = ${bundle.total.euro()} € an der Kassa",
+                    str.packageDeposit(it, bundle.total),
                     style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Text(
-                "Mindestmenge für den Aktionspreis – so viel zahlst du für ${bundle.quantity} Stück.",
+                str.packageHint(bundle.quantity),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -288,10 +295,11 @@ private fun Color.luminanceIsDark(): Boolean = (0.299 * red + 0.587 * green + 0.
 
 @Composable
 private fun Conditions(offer: Offer) {
-    Section("Bedingungen & Hinweise") {
+    val str = LocalStrings.current
+    Section(str.conditionsTitle) {
         if (offer.conditions.isEmpty()) {
             Text(
-                "Keine besonderen Bedingungen bekannt – Aktionspreis gilt ohne Kundenkarte und ab 1 Stück.",
+                str.noConditions,
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -305,11 +313,11 @@ private fun Conditions(offer: Offer) {
                 Spacer(Modifier.size(12.dp))
                 Column(Modifier.weight(1f)) {
                     Text(
-                        c.label + if (c.inferred) "  (vermutet)" else "",
+                        c.label(str.lang) + if (c.inferred) "  ${str.inferred}" else "",
                         style = MaterialTheme.typography.titleSmall,
                     )
-                    Text(style.title, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    c.detail?.let { Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 2.dp)) }
+                    Text(str.conditionTitle(c.type), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    c.detail(str.lang)?.let { Text(it, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 2.dp)) }
                 }
             }
         }
@@ -318,14 +326,15 @@ private fun Conditions(offer: Offer) {
 
 @Composable
 private fun Validity(offer: Offer, today: LocalDate) {
-    Section("Aktionszeitraum") {
-        Text(validityLong(offer, today), style = MaterialTheme.typography.titleSmall)
-        remainingText(offer, today)?.let {
+    val str = LocalStrings.current
+    Section(str.periodTitle) {
+        Text(validityLong(offer, str), style = MaterialTheme.typography.titleSmall)
+        remainingText(offer, today, str)?.let {
             Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
         }
         if (offer.validTo == null) {
             Text(
-                "Die Quelle nennt kein Enddatum – bitte im Flugblatt bzw. in der Filiale prüfen.",
+                str.noEndDate,
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -336,7 +345,7 @@ private fun Validity(offer: Offer, today: LocalDate) {
 private fun FlyerCrop(offer: Offer) {
     val crop = offer.flyerImageUrl ?: return
     if (crop == offer.imageUrl) return
-    Section("Ausschnitt aus dem Flugblatt") {
+    Section(LocalStrings.current.flyerExcerpt) {
         OfferImage(
             offer,
             Modifier
@@ -353,10 +362,11 @@ private fun FlyerCrop(offer: Offer) {
 
 @Composable
 private fun Sources(offer: Offer) {
-    Section("Datenquellen") {
+    val lang = LocalStrings.current.lang
+    Section(LocalStrings.current.sourcesTitle) {
         offer.sources.forEach { s ->
-            Text("• ${s.displayName}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-            Text(s.description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("• ${Texts.sourceName(s, lang)}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+            Text(Texts.sourceDescription(s, lang), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -369,13 +379,13 @@ private fun Section(title: String, content: @Composable () -> Unit) {
     }
 }
 
-private fun shareText(offer: Offer, today: LocalDate): String = buildString {
-    append("${offer.chain.displayName}: ${offer.title} – ${offer.price.euro()} €")
-    offer.regularPrice?.let { append(" statt ${it.euro()} €") }
-    offer.deposit?.amount?.let { append(" + ${it.euro()} € Pfand") }
-    offer.bundle()?.let { append(" (Paket ${it.label}: ${it.total.euro()} €)") }
-    val conds = offer.conditions.filter { !it.inferred && it.type != ConditionType.NOTE }.joinToString(", ") { it.label }
-    if (conds.isNotEmpty()) append(" ($conds)")
-    validityShort(offer, today)?.let { append(", $it") }
-    offer.url?.let { append("\n$it") }
+private fun shareText(offer: Offer, today: LocalDate, s: UiStrings): String {
+    val bundle = offer.bundle(s.lang)
+    val conds = offer.conditions.filter { !it.inferred && it.type != ConditionType.NOTE }.joinToString(", ") { it.label(s.lang) }
+    val text = s.shareText(
+        chain = offer.chain.displayName, title = offer.title, price = offer.price, regular = offer.regularPrice,
+        deposit = offer.deposit?.amount, pkg = bundle?.let { "${it.label}: ${s.money(it.total)}" },
+        conditions = conds, validity = validityShort(offer, today, s),
+    )
+    return offer.url?.let { "$text\n$it" } ?: text
 }

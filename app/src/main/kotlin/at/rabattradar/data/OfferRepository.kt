@@ -92,8 +92,8 @@ class OfferRepository(
             val s = settings.settings.first()
             val snapshot = aggregator.fetch(FetchContext(zipCode = s.zipCode), chains = Chain.entries.toSet())
             if (snapshot.offers.isEmpty()) {
-                val reasons = snapshot.statuses.filter { !it.ok }.joinToString("; ") { "${it.source.displayName}: ${it.error}" }
-                _state.update { it.copy(refreshing = false, error = "Keine Angebote geladen. $reasons") }
+                val reasons = snapshot.statuses.filter { !it.ok }.joinToString("; ") { "${it.source.name}: ${it.error}" }
+                _state.update { it.copy(refreshing = false, error = reasons.ifBlank { "0 offers" }) }
                 return@withLock
             }
             withContext(Dispatchers.IO) { file.writeText(json.encodeToString(Snapshot.serializer(), snapshot)) }

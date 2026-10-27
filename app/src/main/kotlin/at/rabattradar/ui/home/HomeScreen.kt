@@ -79,8 +79,9 @@ import at.rabattradar.core.search.SortOrder
 import at.rabattradar.core.search.ValidityFilter
 import at.rabattradar.ui.brand.StoreLogo
 import at.rabattradar.ui.components.OfferCard
+import at.rabattradar.ui.i18n.LocalStrings
 import at.rabattradar.ui.theme.FlyerFont
-import java.util.Locale
+import at.rabattradar.core.i18n.Texts
 
 @Composable
 fun HomeScreen(
@@ -180,8 +181,8 @@ private fun Header(refreshing: Boolean, onRefresh: () -> Unit, onOpenSettings: (
         if (refreshing) {
             CircularProgressIndicator(Modifier.size(20.dp).padding(end = 4.dp), strokeWidth = 2.dp)
         }
-        IconButton(onClick = onRefresh, enabled = !refreshing) { Icon(Icons.Filled.Refresh, "Aktualisieren") }
-        IconButton(onClick = onOpenSettings) { Icon(Icons.Filled.Settings, "Einstellungen") }
+        IconButton(onClick = onRefresh, enabled = !refreshing) { Icon(Icons.Filled.Refresh, LocalStrings.current.refresh) }
+        IconButton(onClick = onOpenSettings) { Icon(Icons.Filled.Settings, LocalStrings.current.settings) }
     }
 }
 
@@ -191,10 +192,10 @@ private fun SearchField(text: String, onChange: (String) -> Unit) {
     TextField(
         value = text,
         onValueChange = onChange,
-        placeholder = { Text("Suchen: Milka, Bier, Kaffee …", maxLines = 1) },
+        placeholder = { Text(LocalStrings.current.searchPlaceholder, maxLines = 1) },
         leadingIcon = { Icon(Icons.Filled.Search, null) },
         trailingIcon = {
-            if (text.isNotEmpty()) IconButton(onClick = { onChange("") }) { Icon(Icons.Filled.Close, "Suche löschen") }
+            if (text.isNotEmpty()) IconButton(onClick = { onChange("") }) { Icon(Icons.Filled.Close, LocalStrings.current.clearSearch) }
         },
         singleLine = true,
         shape = RoundedCornerShape(28.dp),
@@ -222,7 +223,7 @@ private fun ChainChips(state: HomeUiState, query: OfferQuery, actions: HomeActio
             FilterChip(
                 selected = query.chains.isEmpty(),
                 onClick = actions::clearChains,
-                label = { Text("Alle  ${state.chainCounts.values.sum()}") },
+                label = { Text("${LocalStrings.current.all}  ${state.chainCounts.values.sum()}") },
                 modifier = Modifier.height(40.dp),
             )
         }
@@ -255,20 +256,20 @@ private fun FilterRow(query: OfferQuery, actions: HomeActions, onOpenFilters: ()
                     onClick = { actions.setValidity(v) },
                     shape = SegmentedButtonDefaults.itemShape(i, ValidityFilter.entries.size),
                     icon = {},
-                    label = { Text(v.label, maxLines = 1, style = MaterialTheme.typography.labelMedium) },
+                    label = { Text(LocalStrings.current.validity(v), maxLines = 1, style = MaterialTheme.typography.labelMedium) },
                 )
             }
         }
         val active = listOf(query.withoutMembership, query.singleItemPrice, !query.includeOnlineShop, query.favoritesOnly).count { it }
         IconButton(onClick = onOpenFilters) {
-            BadgedBox(badge = { if (active > 0) Badge { Text("$active") } }) { Icon(Icons.Filled.Tune, "Filter") }
+            BadgedBox(badge = { if (active > 0) Badge { Text("$active") } }) { Icon(Icons.Filled.Tune, LocalStrings.current.filters) }
         }
         Box {
-            IconButton(onClick = { sortOpen = true }) { Icon(Icons.AutoMirrored.Filled.Sort, "Sortierung") }
+            IconButton(onClick = { sortOpen = true }) { Icon(Icons.AutoMirrored.Filled.Sort, LocalStrings.current.sort) }
             DropdownMenu(expanded = sortOpen, onDismissRequest = { sortOpen = false }) {
                 SortOrder.entries.forEach { s ->
                     DropdownMenuItem(
-                        text = { Text(s.label, fontWeight = if (s == query.sort) FontWeight.Bold else FontWeight.Normal) },
+                        text = { Text(LocalStrings.current.sortOrder(s), fontWeight = if (s == query.sort) FontWeight.Bold else FontWeight.Normal) },
                         onClick = { actions.setSort(s); sortOpen = false },
                     )
                 }
@@ -280,34 +281,35 @@ private fun FilterRow(query: OfferQuery, actions: HomeActions, onOpenFilters: ()
 @Composable
 private fun FilterSheet(query: OfferQuery, actions: HomeActions) {
     Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
-        Text("Filter", style = MaterialTheme.typography.titleLarge)
+        val s = LocalStrings.current
+        Text(s.filters, style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(12.dp))
         SwitchRow(
-            "Ohne Kundenkarte & App",
-            "Blendet Preise aus, die nur mit jö, Lidl Plus, PENNY App oder SPAR-App-Gutschein gelten.",
+            s.filterWithoutMembership,
+            s.filterWithoutMembershipHint,
             query.withoutMembership, actions::setWithoutMembership,
         )
         SwitchRow(
-            "Nur Einzelpreise",
-            "Blendet Mengenaktionen aus (2+1 gratis, „ab 2 Stk. je“, „bei 3 Pkg. je“).",
+            s.filterSinglePrice,
+            s.filterSinglePriceHint,
             query.singleItemPrice, actions::setSingleItemPrice,
         )
         SwitchRow(
-            "Online-Shop-Aktionen",
-            "Aktionen, die nur aus Online-Shop-Daten stammen (Filialpreis kann abweichen).",
+            s.filterOnlineShop,
+            s.filterOnlineShopHint,
             query.includeOnlineShop, actions::setIncludeOnlineShop,
         )
-        SwitchRow("Nur Merkliste", "Nur Angebote, die du mit ♥ markiert hast.", query.favoritesOnly, actions::setFavoritesOnly)
+        SwitchRow(s.filterFavorites, s.filterFavoritesHint, query.favoritesOnly, actions::setFavoritesOnly)
         Spacer(Modifier.height(12.dp))
-        Text("Sortierung", style = MaterialTheme.typography.titleMedium)
-        SortOrder.entries.forEach { s ->
+        Text(s.sort, style = MaterialTheme.typography.titleMedium)
+        SortOrder.entries.forEach { o ->
             Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(selected = query.sort == s, onClick = { actions.setSort(s) })
-                Text(s.label)
+                RadioButton(selected = query.sort == o, onClick = { actions.setSort(o) })
+                Text(s.sortOrder(o))
             }
         }
         Spacer(Modifier.height(8.dp))
-        TextButton(onClick = actions::resetFilters) { Text("Alle Filter zurücksetzen") }
+        TextButton(onClick = actions::resetFilters) { Text(s.resetAllFilters) }
     }
 }
 
@@ -328,12 +330,12 @@ private fun ResultHeader(state: HomeUiState) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                "${String.format(Locale.GERMANY, "%,d", state.offers.size)} Angebote",
+                LocalStrings.current.offers(state.offers.size),
                 style = MaterialTheme.typography.titleMedium,
             )
             Spacer(Modifier.weight(1f))
             state.fetchedAt?.let {
-                Text(updatedText(it), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(LocalStrings.current.updated((System.currentTimeMillis() - it) / 60_000), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
         if (state.failedSources.isNotEmpty() || state.error != null) {
@@ -346,11 +348,12 @@ private fun ResultHeader(state: HomeUiState) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Icon(Icons.Filled.Warning, null, tint = MaterialTheme.colorScheme.tertiary, modifier = Modifier.size(18.dp))
-                val names = state.failedSources.joinToString { it.source.displayName }
+                val lang = LocalStrings.current.lang
+                val names = state.failedSources.joinToString { Texts.sourceName(it.source, lang) }
                 Text(
                     when {
-                        state.error != null -> "Aktualisierung fehlgeschlagen: ${state.error}. Es werden gespeicherte Daten angezeigt."
-                        else -> "Nicht erreichbar: $names – diese Angebote fehlen. Zum Wiederholen nach unten ziehen."
+                        state.error != null -> LocalStrings.current.updateFailed(state.error)
+                        else -> LocalStrings.current.unreachable(names)
                     },
                     style = MaterialTheme.typography.bodySmall,
                 )
@@ -359,26 +362,17 @@ private fun ResultHeader(state: HomeUiState) {
     }
 }
 
-private fun updatedText(fetchedAt: Long): String {
-    val minutes = (System.currentTimeMillis() - fetchedAt) / 60_000
-    return when {
-        minutes < 1 -> "gerade aktualisiert"
-        minutes < 60 -> "vor $minutes Min. aktualisiert"
-        minutes < 48 * 60 -> "vor ${minutes / 60} Std. aktualisiert"
-        else -> "vor ${minutes / 1440} Tagen aktualisiert"
-    }
-}
-
 @Composable
 private fun EmptyResults(query: OfferQuery, actions: HomeActions) {
     Column(Modifier.fillMaxWidth().padding(vertical = 48.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Keine Angebote gefunden", style = MaterialTheme.typography.titleMedium)
+        val s = LocalStrings.current
+        Text(s.noOffers, style = MaterialTheme.typography.titleMedium)
         Text(
-            if (query.validity == ValidityFilter.NOW) "Tipp: Unter „Demnächst“ stehen die Angebote ab Donnerstag/Montag." else "Andere Suchbegriffe oder weniger Filter probieren.",
+            if (query.validity == ValidityFilter.NOW) s.noOffersNowHint else s.noOffersHint,
             style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center, modifier = Modifier.padding(16.dp),
         )
-        TextButton(onClick = actions::resetFilters) { Text("Filter zurücksetzen") }
+        TextButton(onClick = actions::resetFilters) { Text(s.resetFilters) }
     }
 }
 
@@ -387,13 +381,13 @@ private fun LoadingState() {
     Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         CircularProgressIndicator()
         Spacer(Modifier.height(16.dp))
-        Text("Lade Angebote …", style = MaterialTheme.typography.titleMedium)
+        Text(LocalStrings.current.loading, style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(12.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             Chain.entries.forEach { StoreLogo(it, width = 44.dp, height = 30.dp) }
         }
         Text(
-            "Flugblätter und Online-Aktionen werden direkt am Handy abgerufen. Das dauert beim ersten Mal ca. 10–30 Sekunden.",
+            LocalStrings.current.loadingHint,
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center, modifier = Modifier.padding(24.dp),
         )
@@ -409,10 +403,10 @@ private fun ErrorState(error: String?, onRetry: () -> Unit) {
     ) {
         Icon(Icons.Filled.CloudOff, null, modifier = Modifier.size(48.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(12.dp))
-        Text("Angebote konnten nicht geladen werden", style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
+        Text(LocalStrings.current.loadFailed, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
         error?.let {
             Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(8.dp))
         }
-        Button(onClick = onRetry) { Text("Erneut versuchen") }
+        Button(onClick = onRetry) { Text(LocalStrings.current.retry) }
     }
 }

@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -17,7 +18,12 @@ import at.rabattradar.ui.home.HomeScreen
 import at.rabattradar.ui.home.HomeViewModel
 import at.rabattradar.ui.settings.SettingsScreen
 import at.rabattradar.ui.settings.SettingsViewModel
+import at.rabattradar.ui.i18n.AppLanguage
+import at.rabattradar.ui.i18n.LocalStrings
+import at.rabattradar.ui.i18n.resolve
+import at.rabattradar.ui.i18n.stringsFor
 import at.rabattradar.ui.theme.RabattRadarTheme
+import kotlinx.coroutines.flow.map
 import java.net.URLDecoder
 import java.net.URLEncoder
 
@@ -25,8 +31,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val settings = (application as RabattRadarApp).settings.settings
         setContent {
-            RabattRadarTheme { AppNavigation() }
+            val languageFlow = remember { settings.map { it.language } }
+            val language by languageFlow.collectAsStateWithLifecycle(initialValue = AppLanguage.SYSTEM)
+            CompositionLocalProvider(LocalStrings provides stringsFor(language.resolve())) {
+                RabattRadarTheme { AppNavigation() }
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 package at.rabattradar.core.source
 
+import at.rabattradar.core.model.TierKind
+import at.rabattradar.core.model.CondKey
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.Condition
 import at.rabattradar.core.model.ConditionType
@@ -11,7 +13,6 @@ import at.rabattradar.core.net.Http
 import at.rabattradar.core.parse.Conditions
 import at.rabattradar.core.parse.Deposits
 import at.rabattradar.core.text.Text
-import at.rabattradar.core.text.euro
 import kotlinx.serialization.json.JsonElement
 import java.time.LocalDate
 import java.util.Locale
@@ -65,23 +66,23 @@ internal object ReweProducts {
         val multiBuy = tags.firstNotNullOfOrNull { Conditions.multiBuyFromTag(it) }
             ?: if (perSet && promoQty != null && single != null) Conditions.multiBuyFromSet(promoQty, promo, single) else null
         multiBuy?.let { conditions += it.copy(unit = minQty?.unit) }
-        if ("pt-abverkauf" in tags) conditions += Condition(ConditionType.CLEARANCE, "Abverkauf", "Abverkaufsware – nur solange der Vorrat reicht.")
-        if ("pt-satterrabatt" in tags) conditions += Condition(ConditionType.NOTE, "Satter Rabatt", "Aktion „Satter Rabatt“ laut ${banner}.")
-        if (item["weightArticle"].bool == true) conditions += Conditions.weightPrice("per kg")!!
+        if ("pt-abverkauf" in tags) conditions += Condition(ConditionType.CLEARANCE, CondKey.CLEARANCE)
+        if ("pt-satterrabatt" in tags) conditions += Conditions.note(CondKey.SATTER_RABATT, mapOf("banner" to banner))
+        if (item["weightArticle"].bool == true) conditions += Conditions.weightPrice()
         Conditions.variants(listOfNotNull(name, description).joinToString(" "))?.let { conditions += it }
         Conditions.footnote(name)?.let { conditions += it }
 
         if ((minQty != null || conditions.any { it.type == ConditionType.MULTI_BUY }) && single != null && single > promo) {
-            tiers += PriceTier("1 ${minQty?.unit ?: "Stk."}", single)
+            tiers += PriceTier(TierKind.SINGLE, single, unit = minQty?.unit ?: "Stk.")
         }
 
         var headline = promo
         if (loyalty != null && loyalty < promo) {
             conditions += Conditions.joeCondition(chain, loyalty)
-            tiers += PriceTier("ohne jö", promo)
+            tiers += PriceTier(TierKind.WITHOUT, promo, program = "jö")
             headline = loyalty
         }
-        if (lowest != null && lowest > 0 && abs(lowest - headline) > 0.005) tiers += PriceTier("Bestpreis 30 Tage", lowest)
+        if (lowest != null && lowest > 0 && abs(lowest - headline) > 0.005) tiers += PriceTier(TierKind.LOWEST_30_DAYS, lowest)
 
         val regularPrice = (crossed ?: standard)?.takeIf { it > headline + 0.004 }
         val discount = priceObj["discountPercentage"].dbl?.let { abs(it).roundToInt() }?.takeIf { it > 0 }
@@ -101,7 +102,7 @@ internal object ReweProducts {
         val categoryPath = item["parentCategories"].arr.map { path -> path.arr.mapNotNull { it["name"].str } }
         val category = Text.clean(item["category"].str) ?: categoryPath.firstOrNull { p -> p.none { "ngebot" in it } }?.lastOrNull()
         categoryPath.flatten().firstOrNull { "Wochenend" in it || "Wochenstart" in it }?.let { campaign ->
-            conditions += Condition(ConditionType.NOTE, campaign.replace(Regex("^bis zu -\\d+%\\s*"), ""), "Teil der Aktion „$campaign“.")
+            conditions += Conditions.note(CondKey.CAMPAIGN, mapOf("name" to campaign.replace(Regex("^bis zu -\\d+%\\s*"), "")))
         }
 
         val depositText = listOfNotNull(name, description, quantity, item["packageLabel"].str, category).joinToString(" ")
@@ -170,13 +171,7 @@ class BillaShopSource(private val http: Http) : OfferSource {
                 offer.copy(
                     conditions = Conditions.merge(
                         offer.conditions,
-                        listOf(
-                            Condition(
-                                ConditionType.NO_DATES, "Datum unbekannt",
-                                "Der BILLA Online-Shop nennt keinen Aktionszeitraum. BILLA-Wochenaktionen laufen meist von Donnerstag bis Mittwoch.",
-                            ),
-                            Condition(ConditionType.ONLINE_SHOP, "lt. Online-Shop", "Preis aus dem BILLA Online-Shop – in der Filiale kann er abweichen."),
-                        ),
+                        listOf(Conditions.noDates("BILLA"), Conditions.onlineShop("BILLA")),
                     ),
                 )
             }
