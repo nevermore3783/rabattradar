@@ -53,6 +53,21 @@ object Texts {
         return if (lang == Lang.DE) u else unitsEn[u]?.first ?: u
     }
 
+    private val packText = Regex("""(?:(\d+) x )?(\d+)er-(\S+)""")
+    private val packsEn = mapOf(
+        "Tray" to ("tray" to "trays"), "Träger" to ("carrier" to "carriers"), "Kiste" to ("crate" to "crates"),
+        "Karton" to ("carton" to "cartons"), "Pack" to ("pack" to "packs"), "Packung" to ("pack" to "packs"),
+    )
+
+    /** Printed pack: "6er-Tray" / "tray of 6", "2 x 12er-Tray" / "2 trays of 12". */
+    fun pack(printed: String, lang: Lang): String {
+        if (lang == Lang.DE) return printed
+        val m = packText.matchEntire(printed) ?: return printed
+        val count = m.groupValues[1].toIntOrNull() ?: 1
+        val (one, many) = packsEn[m.groupValues[3]] ?: (m.groupValues[3] to m.groupValues[3])
+        return if (count == 1) "$one of ${m.groupValues[2]}" else "$count $many of ${m.groupValues[2]}"
+    }
+
     /** "Tafeln" (as printed) / "bars". */
     fun unitPlural(unit: String?, printed: String?, lang: Lang): String {
         val u = unit ?: "Stk."
@@ -107,6 +122,15 @@ object Texts {
         CondKey.CAMPAIGN -> c.arg("name").orEmpty()
         CondKey.ALSO_ONLINE -> lang.pick("auch online", "also online")
         CondKey.DATES_ADOPTED -> lang.pick("Zeitraum übernommen", "Dates adopted")
+        CondKey.WITHOUT_DEAL -> lang.pick("ohne ", "without ") + "${program(c.arg("program"), lang)}: " + quantityDeal(c, lang)
+    }
+
+    /** "4+2 gratis" or "bei 6 Fl." for a deal kept in a note. */
+    private fun quantityDeal(c: Condition, lang: Lang): String {
+        if (c.arg("buy") != null) return "${c.arg("buy")}+${c.arg("free")} " + lang.pick("gratis", "free")
+        val units = unitPlural(c.unit, c.arg("printed"), lang)
+        val n = c.quantity ?: 0
+        return if (c.arg("set") == "true") lang.pick("bei $n $units", "buy $n $units") else lang.pick("ab $n $units", "from $n $units")
     }
 
     fun detail(c: Condition, lang: Lang): String? = when (c.key) {
@@ -137,10 +161,10 @@ object Texts {
             if (c.inferred) {
                 val regular = c.price("regular")?.let { money(it, lang) } ?: "?"
                 lang.pick(
-                    "Der Preis entspricht genau 2/3 des Normalpreises ($regular €). Im Flugblatt steht dann meist „2+1 gratis“ – " +
-                        "der Preis gilt nur beim Kauf von 3 Stück. Die Datenquelle nennt die Bedingung nicht, bitte im Flugblatt prüfen.",
-                    "The price is exactly 2/3 of the normal price (€$regular). The flyer then usually says \"2+1 free\" – " +
-                        "the price only applies when buying 3. The data source does not state the condition, please check the flyer.",
+                    "Der Preis entspricht genau 2/3 des Normalpreises ($regular €). Im Flugblatt steht dann meist „2+1 gratis“ (oder „4+2 gratis“) – " +
+                        "der Preis gilt nur beim Kauf von 3 (bzw. 6) Stück. Die Datenquelle nennt die Bedingung nicht, bitte im Flugblatt prüfen.",
+                    "The price is exactly 2/3 of the normal price (€$regular). The flyer then usually says \"2+1 free\" (or \"4+2 free\") – " +
+                        "the price only applies when buying 3 (or 6). The data source does not state the condition, please check the flyer.",
                 )
             } else {
                 lang.pick(
@@ -212,6 +236,19 @@ object Texts {
             "Aktionszeitraum vom gleichartigen Flugblatt-Angebot „${c.arg("name")}“ übernommen (gleiche Marke, gleicher Preis, gleiche Bedingung).",
             "Promotion period taken from the similar flyer offer \"${c.arg("name")}\" (same brand, price and condition).",
         )
+        CondKey.WITHOUT_DEAL -> {
+            val n = c.quantity ?: 0
+            val units = unitPlural(c.unit, c.arg("printed"), lang)
+            val price = c.price()?.let { money(it, lang) } ?: "?"
+            val program = program(c.arg("program"), lang)
+            val free = c.arg("buy")?.let { lang.pick(" (${it}+${c.arg("free")} gratis)", " (${it}+${c.arg("free")} free)") }.orEmpty()
+            lang.pick(
+                "Der angezeigte Preis gilt mit $program. Ohne $program gibt es laut Flugblatt eine Mengenaktion: " +
+                    "${if (c.arg("set") == "true") "bei" else "ab"} $n $units je $price €$free.",
+                "The price shown needs the $program. Without it, the flyer offers a multi-buy: " +
+                    "${if (c.arg("set") == "true") "buy" else "from"} $n $units at €$price each$free.",
+            )
+        }
     }
 
     private fun depositDetail(c: Condition, lang: Lang): String = buildString {
@@ -256,6 +293,7 @@ object Texts {
         SourceId.PENNY_WEB -> "penny.at"
         SourceId.SPAR_SHOP -> lang.pick("INTERSPAR Online-Shop", "INTERSPAR online shop")
         SourceId.BILLA_FLYER -> lang.pick("BILLA Flugblatt (Text)", "BILLA flyer (text)")
+        SourceId.SPAR_FLYER -> lang.pick("SPAR Flugblatt (Text)", "SPAR flyer (text)")
     }
 
     fun sourceDescription(s: SourceId, lang: Lang): String = when (s) {
@@ -265,5 +303,6 @@ object Texts {
         SourceId.PENNY_WEB -> lang.pick("Wochenangebote mit jö/App-Preisen und Mengenrabatten", "Weekly offers with jö/app prices and multi-buys")
         SourceId.SPAR_SHOP -> lang.pick("Online-Shop-Aktionen (meist Non-Food und Getränke)", "Online shop promotions (mostly non-food and drinks)")
         SourceId.BILLA_FLYER -> lang.pick("Mengenaktionen wie 3+3 gratis aus dem Text des BILLA/BILLA PLUS Flugblatts", "Multi-buys like 3+3 free from the text of the BILLA/BILLA PLUS flyer")
+        SourceId.SPAR_FLYER -> lang.pick("Mengenaktionen wie 12+12 gratis und Tray-Preise aus den SPAR/EUROSPAR/INTERSPAR-Flugblättern", "Multi-buys like 12+12 free and tray prices from the SPAR/EUROSPAR/INTERSPAR flyers")
     }
 }

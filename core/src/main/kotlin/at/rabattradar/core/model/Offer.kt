@@ -22,7 +22,7 @@ enum class Chain(val displayName: String, val website: String) {
 
 /** Where an offer was scraped from. One merged offer can come from several sources. Names: [Texts.sourceName]. */
 @Serializable
-enum class SourceId { MARKTGURU, BILLA_SHOP, LIDL_WEB, PENNY_WEB, SPAR_SHOP, BILLA_FLYER }
+enum class SourceId { MARKTGURU, BILLA_SHOP, LIDL_WEB, PENNY_WEB, SPAR_SHOP, BILLA_FLYER, SPAR_FLYER }
 
 @Serializable
 enum class ConditionType {
@@ -75,6 +75,9 @@ enum class CondKey {
     LIDL_PLUS, SPAR_APP, PENNY_APP, BILLA_APP, JOE, LOYALTY_GENERIC, APP_GENERIC,
     MULTI_BUY, MIN_QUANTITY, WEEKDAYS, ONLINE_ONLY, ONLINE_SHOP, CLEARANCE, SATTER_RABATT,
     WEIGHT_PRICE, VARIANTS, DEPOSIT, NO_DATES, FOOTNOTE, CAMPAIGN, ALSO_ONLINE, DATES_ADOPTED,
+
+    /** Multi-buy that applies to the price without app/voucher (the headline needs the app). */
+    WITHOUT_DEAL,
 }
 
 @Serializable

@@ -14,7 +14,9 @@ import at.rabattradar.core.source.LidlSource
 import at.rabattradar.core.source.MarktguruSource
 import at.rabattradar.core.source.OfferSource
 import at.rabattradar.core.source.PennySource
+import at.rabattradar.core.source.SparFlyerText
 import at.rabattradar.core.source.SparShopSource
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -42,7 +44,17 @@ data class Snapshot(
 class Aggregator(
     private val sources: List<OfferSource>,
     private val billaFlyer: BillaFlyerText? = null,
+    private val sparFlyer: SparFlyerText? = null,
 ) {
+
+    /** Flyer text that adds conditions to the merged offers; loading its pages fails as a whole. */
+    private class FlyerJob(
+        val id: SourceId,
+        val result: Deferred<FlyerResult>,
+        val enrich: (List<Offer>, List<FlyerPage>) -> List<Offer>,
+    )
+
+    private class FlyerResult(val pages: List<FlyerPage>, val error: String?, val millis: Long)
 
     suspend fun fetch(
         ctx: FetchContext,
@@ -51,7 +63,7 @@ class Aggregator(
     ): Snapshot = coroutineScope {
         val jobs = sources
             .filter { it.id in enabledSources && it.chains.any { c -> c in chains } }
-            .map { source ->
+            .associateWith { source ->
                 async {
                     val start = System.currentTimeMillis()
                     try {
@@ -64,34 +76,48 @@ class Aggregator(
                     }
                 }
             }
-        val flyerJob = billaFlyer?.takeIf { Chain.BILLA in chains && it.id in enabledSources }?.let { flyer ->
-            async {
-                val start = System.currentTimeMillis()
-                try {
-                    flyer.pages(ctx.today) to null
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    emptyList<FlyerPage>() to SourceStatus(flyer.id, false, 0, e.message ?: e.javaClass.simpleName, System.currentTimeMillis() - start)
-                } to start
-            }
-        }
-        val results = jobs.awaitAll()
+
+        fun flyerJob(id: SourceId, chain: Chain, enrich: (List<Offer>, List<FlyerPage>) -> List<Offer>, pages: suspend () -> List<FlyerPage>) =
+            if (chain in chains && id in enabledSources) {
+                FlyerJob(id, async {
+                    val start = System.currentTimeMillis()
+                    try {
+                        FlyerResult(pages(), null, System.currentTimeMillis() - start)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        FlyerResult(emptyList(), e.message ?: e.javaClass.simpleName, System.currentTimeMillis() - start)
+                    }
+                }, enrich)
+            } else null
+
+        // The SPAR flyer addresses contain the start date, which the marktguru offers tell.
+        val marktguru = jobs.entries.firstOrNull { it.key is MarktguruSource }?.value
+        val flyerJobs = listOfNotNull(
+            billaFlyer?.let { flyer -> flyerJob(flyer.id, Chain.BILLA, BillaFlyerText::enrichAll) { flyer.pages(ctx.today) } },
+            sparFlyer?.let { flyer ->
+                flyerJob(flyer.id, Chain.SPAR, SparFlyerText::enrichAll) {
+                    val starts = marktguru?.await()?.first.orEmpty().filter { it.chain == Chain.SPAR }.mapNotNull { it.validFrom }
+                    flyer.pages(ctx.zipCode, ctx.today, starts)
+                }
+            },
+        )
+
+        val results = jobs.values.awaitAll()
         val all = results.flatMap { it.first }.filter { it.chain in chains && !it.isExpired(ctx.today) }
         var offers = OfferMerger.merge(all)
         val statuses = results.map { it.second }.toMutableList()
 
-        flyerJob?.await()?.let { (result, start) ->
-            val (pages, failure) = result
-            if (failure != null) {
-                statuses += failure
-            } else {
-                val before = offers
-                offers = BillaFlyerText.enrichAll(offers, pages)
-                val enriched = offers.indices.count { offers[it] !== before[it] }
-                statuses += SourceStatus(SourceId.BILLA_FLYER, pages.isNotEmpty(), enriched,
-                    if (pages.isEmpty()) "Kein Flugblatt-Text gefunden" else null, System.currentTimeMillis() - start)
+        for (job in flyerJobs) {
+            val r = job.result.await()
+            if (r.error != null) {
+                statuses += SourceStatus(job.id, false, 0, r.error, r.millis)
+                continue
             }
+            val before = offers
+            offers = job.enrich(offers, r.pages)
+            val enriched = offers.indices.count { offers[it] !== before[it] }
+            statuses += SourceStatus(job.id, r.pages.isNotEmpty(), enriched, if (r.pages.isEmpty()) "Kein Flugblatt-Text gefunden" else null, r.millis)
         }
         Snapshot(
             fetchedAt = System.currentTimeMillis(),
@@ -114,6 +140,7 @@ class Aggregator(
                 SparShopSource(http),
             ),
             BillaFlyerText(http),
+            SparFlyerText(http),
         )
     }
 }

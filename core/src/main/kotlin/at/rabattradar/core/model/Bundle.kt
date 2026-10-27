@@ -27,10 +27,12 @@ fun Offer.bundle(lang: Lang = Lang.DE): Bundle? {
     val quantity = minQty?.quantity ?: multi?.quantity ?: return null
     if (quantity < 2) return null
     val unit = minQty?.unit ?: multi?.unit ?: "Stk."
+    // A printed pack price ("6er-Tray 7,92") wins over quantity x unit price, which may differ by rounding.
+    val pack = minQty?.args?.get("pack")?.takeIf { minQty.quantity == quantity }
     return Bundle(
         quantity = quantity,
-        label = "$quantity ${Texts.unitPlural(unit, minQty?.args?.get("printed"), lang)}",
-        price = price * quantity,
+        label = pack?.let { Texts.pack(it, lang) } ?: "$quantity ${Texts.unitPlural(unit, minQty?.args?.get("printed"), lang)}",
+        price = pack?.let { minQty.args["packPrice"]?.toDoubleOrNull() } ?: (price * quantity),
         deposit = deposit?.amount?.let { it * quantity },
         inferred = minQty == null && multi?.inferred == true,
     )

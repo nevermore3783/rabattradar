@@ -113,7 +113,8 @@ object Conditions {
         "rollen" to "Rolle", "rolle" to "Rolle", "briefe" to "Brief", "brief" to "Brief",
         "boxen" to "Box", "box" to "Box", "pakete" to "Paket", "paket" to "Paket",
         "riegel" to "Riegel", "tassen" to "Tasse", "blister" to "Blister", "netze" to "Netz",
-        "kisten" to "Kiste", "tray" to "Tray", "trays" to "Tray", "waschgang" to "WG",
+        "kisten" to "Kiste", "kiste" to "Kiste", "tray" to "Tray", "trays" to "Tray", "waschgang" to "WG",
+        "gl" to "Glas", "tfl" to "Tafel", "be" to "Becher", "träger" to "Träger",
     )
 
     fun singularUnit(raw: String): String {

@@ -106,7 +106,16 @@ fun HomeContent(
     var showFilters by rememberSaveable { mutableStateOf(false) }
     val gridState = rememberLazyGridState()
 
-    LaunchedEffect(query) { gridState.scrollToItem(0) }
+    // Back to the top when the search or a filter changes. The effect also restarts when the screen returns
+    // from an offer, so remember which query the list was scrolled for and keep the position in that case.
+    var scrolledFor by rememberSaveable { mutableStateOf(query.toString()) }
+    LaunchedEffect(query) {
+        val key = query.toString()
+        if (key != scrolledFor) {
+            scrolledFor = key
+            gridState.scrollToItem(0)
+        }
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,

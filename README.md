@@ -45,6 +45,7 @@ Scraping runs **on the phone**, so no server is needed and the requests come fro
 | | marktguru flyer offers | Dates and BILLA PLUS-only items. Merged into the shop offers (see below). |
 | | BILLA/BILLA PLUS flyer text (Publitas `spreads.json`) | Multi-buys that marktguru drops ("EXTREM AKTION 3+3 GRATIS, BEI 6 FL. JE"). See below. |
 | SPAR group | marktguru flyer offers | The weekly SPAR/EUROSPAR/INTERSPAR/Gourmet flyer, including the `MIT SPAR-APP-GUTSCHEIN 2,15 €` hint |
+| | SPAR/EUROSPAR/Gourmet/INTERSPAR flyer text (iPaper flipbooks on `flugblatt.spar.at` / `flugblatt.interspar.at`) | Multi-buys and tray prices that marktguru drops ("1 Ds. 1,39 ab 24 Ds. je 0,69 12+12 GRATIS 24er-Tray 16,56"). See below. |
 | | INTERSPAR shop search (`search-spar.spar-ics.com`, `is-on-promotion:true`) | Online-shop promotions (mostly wine, drinks and household), flagged as such |
 | HOFER | marktguru flyer offers | The full weekly flyer, including Fr/Sa specials |
 | Lidl | `lidl.at/q/api/search?q=*` | All current and upcoming in-store promotions with exact start/end dates, **Lidl Plus prices** (including Lidl Plus exclusive deals), "Bei 2 Stk. je", single price |
@@ -69,7 +70,13 @@ I looked at existing projects before writing the scrapers:
   2. takes the "1 FL. € 2.49" line equal to its normal price;
   3. picks the X+Y label that is arithmetically consistent (1.24 × 6 = 2.49 × 3 → 3+3, not 4+2).
 
-  Price lines and labels are assigned once per page in reading order, so two Sekt offers take the two "1+1" labels and the Eistee next to them gets its "2+2". This recovers about 60 BILLA conditions per week. HOFER, INTERSPAR and Lidl flyers are also on Publitas (Promozilla), but as images without text.
+  Price lines and labels are assigned once per page in reading order, so two Sekt offers take the two "1+1" labels and the Eistee next to them gets its "2+2". This recovers about 60 BILLA conditions per week. HOFER and Lidl flyers are also on Publitas (Promozilla), but as images without text.
+- **SPAR flyer text.** spar.at and interspar.at sit behind Cloudflare, but the flyers themselves are iPaper flipbooks on `flugblatt.spar.at` and `flugblatt.interspar.at`, which are not. Every flipbook page embeds its text (`window.staticSettings.pageTexts`). The addresses are predictable from the region (derived from the postal code) and the flyer's first day, which the marktguru offer dates provide:
+  - `flugblatt.spar.at/{region}/{spar|eurospar}/{yyMMdd}-1-flugblatt-kw-{week}/`
+  - `flugblatt.spar.at/{region}/spar-gourmet/{yyMMdd}-1-flugblatt-kw-{week}-{week+1}/`
+  - `flugblatt.interspar.at/{region}/{region}_kw{week}/`
+
+  A page's text is a single run of words with neighbouring products interleaved ("1 Fl. 1,99 ab 6 Fl. je Coca-Cola 1,32 4 + 2 GRATIS"), so matching works on character positions. A price block "1 Ds. 1,39 ab 24 Ds. je" must carry the offer's normal price, the offer's brand or name must appear close to it, and the "X+Y" label must fit the prices (0.69 × 24 = 1.39 × 12 → 12+12). A printed tray price that equals quantity × price ("6er-Tray 7,92", "2 x 12er-Tray 15,36") becomes the package price. If the headline is a SPAR-app voucher price, a multi-buy that only fits the price without the voucher is kept as a note ("ohne Gutschein: 4+2 gratis"). A guessed "2+1?" that the flyer prints as a plain reduction ("statt 7,49 4,99") is removed. This recovers about 165 SPAR-group conditions per week (Vienna, KW 43/2026).
 - [supermarket-deals-at](https://github.com/roehrbacher/supermarket-deals-at) (aktionsradar.at + Lidl/BILLA APIs) and [Nightdreams-bat/supermarket-deals](https://github.com/Nightdreams-bat/supermarket-deals) (marktguru) confirmed the endpoints and the "query the banner name to get the whole flyer" trick.
 
 A live run (27 Oct 2026, PLZ 1010) gave about **3,850 merged offers**, all with a picture:
@@ -81,11 +88,13 @@ A live run (27 Oct 2026, PLZ 1010) gave about **3,850 merged offers**, all with 
 | lidl.at | 349 |
 | penny.at | 483 |
 | INTERSPAR shop | 460 |
+| BILLA flyer text (conditions added) | 62 |
+| SPAR flyer text (conditions added) | 167 |
 
 ### Known limitations
 
 - **BILLA**: promotions found only in the online shop and not in the flyer have no end date. The app labels them "Datum unbekannt" and "lt. Online-Shop". Flyer-only items have no multi-buy details unless they can be inferred.
-- **HOFER and SPAR flyer items** rely on marktguru alone, so multi-buy conditions may be missing; the ⅔ heuristic only catches 2+1. Personalised jö coupons and the "Rabattsammler" are not covered, since they live inside the jö/BILLA apps behind a login.
+- **HOFER flyer items** rely on marktguru alone, so multi-buy conditions may be missing; the ⅔ heuristic only catches 2+1 (or 4+2). For SPAR, only the main weekly flyers are read; offers from extra flyers (Halloween, "Monatssparer") keep the marktguru data. Personalised jö coupons and the "Rabattsammler" are not covered, since they live inside the jö/BILLA apps behind a login.
 - Logos are loaded from marktguru's CDN and cached. While they load, or when offline before the first load, a drawn word mark in the chain colours is shown.
 - The endpoints can change at any time. When a source fails, the others still load and the app shows which one is missing.
 

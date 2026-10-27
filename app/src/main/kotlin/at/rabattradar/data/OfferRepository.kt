@@ -90,7 +90,8 @@ class OfferRepository(
         _state.update { it.copy(refreshing = true, error = null) }
         try {
             val s = settings.settings.first()
-            val snapshot = aggregator.fetch(FetchContext(zipCode = s.zipCode), chains = Chain.entries.toSet())
+            // Parsing and merging a few thousand offers is CPU work - keep it off the caller's (possibly main) thread.
+            val snapshot = withContext(Dispatchers.Default) { aggregator.fetch(FetchContext(zipCode = s.zipCode), chains = Chain.entries.toSet()) }
             if (snapshot.offers.isEmpty()) {
                 val reasons = snapshot.statuses.filter { !it.ok }.joinToString("; ") { "${it.source.name}: ${it.error}" }
                 _state.update { it.copy(refreshing = false, error = reasons.ifBlank { "0 offers" }) }

@@ -36,7 +36,7 @@ object Deposits {
     )
     private val reusable = Regex("""mehrweg|\bMW\b""", ic)
     private val dairy = Regex(
-        """milch|joghurt|jogurt|kakao|kefir|buttermilch|molke|actimel|yakult|\blatte\b|cappuccino|eiskaffee|skyr|ayran|lassi""", ic,
+        """milch|joghurt|jogurt|kakao|kefir|buttermilch|molke|actimel|yakult|\blatte\b|cappuccino|eiskaffee|skyr|\bayran\b|\blassi\b""", ic,
     )
     private val carton = Regex("""packung|karton|elopak|tetra|beutel|pouch|kiste|\bfass\b|partyfass|kanister|bag.in.box""", ic)
     private val can = Regex("""\bdosen?\b|\bds\b\.?|\bcan\b|-dose""", ic)

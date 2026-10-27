@@ -280,6 +280,60 @@ class ScreenshotTest {
         compose.onRoot().captureRoboImage("$out/showcase_detail_billa_flyer.png")
     }
 
+    /** The SPAR offers whose multi-buys come from the flyer text (12+12, 1+1, 4+2 with tray prices). */
+    private fun sparExamples(s: Snapshot): List<Offer> {
+        val spar = s.offers.filter { SourceId.SPAR_FLYER in it.sources }
+        return listOfNotNull(
+            spar.firstOrNull { it.name == "Energy Drink" && it.brand == "S Budget" },
+            spar.firstOrNull { it.name == "Choco Wafer" },
+            spar.firstOrNull { it.brand == "Coca-Cola" && it.price == 1.32 },
+            spar.firstOrNull { it.brand == "Coca-Cola" && it.price == 0.69 },
+        )
+    }
+
+    @Test
+    fun showcaseSparMultiBuys() = showcaseSpar(Lang.DE, "showcase_spar_multibuys.png")
+
+    @Test
+    fun showcaseSparMultiBuysEnglish() = showcaseSpar(Lang.EN, "showcase_spar_multibuys_en.png")
+
+    private fun showcaseSpar(lang: Lang, file: String) {
+        val s = snapshot()
+        assumeTrue(s != null)
+        val offers = sparExamples(s!!)
+        installImages(download(offers.mapNotNull { it.imageUrl } + logoUrls()))
+        compose.setContent {
+            Themed(lang) {
+                Column(
+                    Modifier.background(MaterialTheme.colorScheme.background).padding(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    offers.chunked(2).forEach { row ->
+                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            row.forEach { OfferCard(it, today, favorite = false, onClick = {}, modifier = Modifier.width(190.dp)) }
+                        }
+                    }
+                }
+            }
+        }
+        compose.onRoot().captureRoboImage("$out/$file")
+    }
+
+    @Test
+    @Config(qualifiers = "w412dp-h2600dp-xxhdpi")
+    fun showcaseDetailSparTray() {
+        val s = snapshot()
+        assumeTrue(s != null)
+        val offer = sparExamples(s!!).firstOrNull { it.price == 1.32 } ?: return
+        installImages(download(listOfNotNull(offer.imageUrl, offer.flyerImageUrl) + logoUrls()))
+        compose.setContent {
+            Themed(Lang.DE) {
+                DetailScreen(offer = offer, today = today, favorite = false, onBack = {}, onToggleFavorite = {})
+            }
+        }
+        compose.onRoot().captureRoboImage("$out/showcase_detail_spar_tray.png")
+    }
+
     @Test
     @Config(qualifiers = "w412dp-h2600dp-xxhdpi")
     fun showcaseDetailLidlPlus() {

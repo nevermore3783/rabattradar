@@ -65,6 +65,8 @@ class DepositsAndBundleTest {
         assertEquals(0.25, beer.amount!!, 0.001)
         assertTrue(beer.inferred)
         assertNull(Deposits.detect("Märzen 0,33 Liter Einweg Bier"))
+        // "Klassik" is no lassi (dairy).
+        assertEquals(0.25, amount("Energy Drink und jetzt NEU: Klassik im Halloween Design, versch. Sorten, 0,25 Liter Softdrinks")!!, 0.001)
 
         val mw = Deposits.detect("Hell 20 x 0,5-Liter-Mehrweg-Flasche")!!
         assertEquals(DepositKind.REUSABLE, mw.kind)
