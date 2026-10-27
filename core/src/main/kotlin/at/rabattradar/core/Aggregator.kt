@@ -6,7 +6,9 @@ import at.rabattradar.core.model.Offer
 import at.rabattradar.core.model.SourceId
 import at.rabattradar.core.net.Http
 import at.rabattradar.core.net.OkHttp
+import at.rabattradar.core.source.BillaFlyerText
 import at.rabattradar.core.source.BillaShopSource
+import at.rabattradar.core.source.FlyerPage
 import at.rabattradar.core.source.FetchContext
 import at.rabattradar.core.source.LidlSource
 import at.rabattradar.core.source.MarktguruSource
@@ -37,7 +39,10 @@ data class Snapshot(
 )
 
 /** Runs all sources in parallel, tolerates partial failures and merges the result. */
-class Aggregator(private val sources: List<OfferSource>) {
+class Aggregator(
+    private val sources: List<OfferSource>,
+    private val billaFlyer: BillaFlyerText? = null,
+) {
 
     suspend fun fetch(
         ctx: FetchContext,
@@ -59,13 +64,40 @@ class Aggregator(private val sources: List<OfferSource>) {
                     }
                 }
             }
+        val flyerJob = billaFlyer?.takeIf { Chain.BILLA in chains && it.id in enabledSources }?.let { flyer ->
+            async {
+                val start = System.currentTimeMillis()
+                try {
+                    flyer.pages(ctx.today) to null
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    emptyList<FlyerPage>() to SourceStatus(flyer.id, false, 0, e.message ?: e.javaClass.simpleName, System.currentTimeMillis() - start)
+                } to start
+            }
+        }
         val results = jobs.awaitAll()
         val all = results.flatMap { it.first }.filter { it.chain in chains && !it.isExpired(ctx.today) }
+        var offers = OfferMerger.merge(all)
+        val statuses = results.map { it.second }.toMutableList()
+
+        flyerJob?.await()?.let { (result, start) ->
+            val (pages, failure) = result
+            if (failure != null) {
+                statuses += failure
+            } else {
+                val before = offers
+                offers = BillaFlyerText.enrichAll(offers, pages)
+                val enriched = offers.indices.count { offers[it] !== before[it] }
+                statuses += SourceStatus(SourceId.BILLA_FLYER, pages.isNotEmpty(), enriched,
+                    if (pages.isEmpty()) "Kein Flugblatt-Text gefunden" else null, System.currentTimeMillis() - start)
+            }
+        }
         Snapshot(
             fetchedAt = System.currentTimeMillis(),
             zipCode = ctx.zipCode,
-            offers = OfferMerger.merge(all),
-            statuses = results.map { it.second },
+            offers = offers,
+            statuses = statuses,
         )
     }
 
@@ -81,6 +113,7 @@ class Aggregator(private val sources: List<OfferSource>) {
                 PennySource(http),
                 SparShopSource(http),
             ),
+            BillaFlyerText(http),
         )
     }
 }

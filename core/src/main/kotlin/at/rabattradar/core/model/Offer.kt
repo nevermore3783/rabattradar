@@ -26,6 +26,7 @@ enum class SourceId(val displayName: String, val description: String) {
     LIDL_WEB("lidl.at", "Filial-Angebote mit Lidl Plus Preisen und exakten Aktionstagen"),
     PENNY_WEB("penny.at", "Wochenangebote mit jö/App-Preisen und Mengenrabatten"),
     SPAR_SHOP("INTERSPAR Online-Shop", "Online-Shop-Aktionen (meist Non-Food und Getränke)"),
+    BILLA_FLYER("BILLA Flugblatt (Text)", "Mengenaktionen wie 3+3 gratis aus dem Text des BILLA/BILLA PLUS Flugblatts"),
 }
 
 @Serializable
