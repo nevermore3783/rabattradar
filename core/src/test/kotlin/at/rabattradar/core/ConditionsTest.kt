@@ -68,6 +68,15 @@ class ConditionsTest {
     }
 
     @Test
+    fun `set prices reveal the multi-buy behind them`() {
+        assertEquals("2+1 gratis", Conditions.multiBuyFromSet(3, 1.72, 2.59)?.label)
+        assertEquals("1+1 gratis", Conditions.multiBuyFromSet(2, 1.39, 2.79)?.label)
+        assertNull(Conditions.multiBuyFromSet(3, 2.00, 2.59))
+        assertNotNull(Conditions.footnote("Helles*"))
+        assertNull(Conditions.footnote("Helles"))
+    }
+
+    @Test
     fun `short promotions are flagged with weekdays`() {
         // 2026-10-30 is a Friday.
         assertEquals("nur Fr & Sa", Conditions.weekdays(LocalDate.of(2026, 10, 30), LocalDate.of(2026, 10, 31))?.label)

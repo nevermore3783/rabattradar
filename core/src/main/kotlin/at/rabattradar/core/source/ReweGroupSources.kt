@@ -51,9 +51,16 @@ internal object ReweProducts {
 
         val promoText = regular["promotionText"].str
         val promoType = regular["promotionType"].str
-        val minQty = promoText?.let { Conditions.minQuantity(it, perSet = promoType == "PER_SET_OF") }
+        val promoQty = regular["promotionQuantity"].dbl?.roundToInt()?.takeIf { it > 1 }
+        val perSet = promoType == "PER_SET_OF"
+        // Some offers ("PENNY PACK ab 24 Dosen") only carry the quantity, not the text.
+        val minQty = (promoText ?: promoQty?.let { (if (perSet) "bei" else "ab") + " $it Stk." })
+            ?.let { Conditions.minQuantity(it, perSet = perSet) }
         minQty?.let { conditions += it }
-        tags.firstNotNullOfOrNull { Conditions.multiBuyFromTag(it) }?.let { conditions += it.copy(unit = minQty?.unit) }
+        val single = standard ?: crossed
+        val multiBuy = tags.firstNotNullOfOrNull { Conditions.multiBuyFromTag(it) }
+            ?: if (perSet && promoQty != null && single != null) Conditions.multiBuyFromSet(promoQty, promo, single) else null
+        multiBuy?.let { conditions += it.copy(unit = minQty?.unit) }
         if ("pt-abverkauf" in tags) conditions += Condition(ConditionType.CLEARANCE, "Abverkauf", "Abverkaufsware – nur solange der Vorrat reicht.")
         if ("pt-satterrabatt" in tags) conditions += Condition(ConditionType.NOTE, "Satter Rabatt", "Aktion „Satter Rabatt“ laut ${banner}.")
         if (deposit != null && deposit > 0) {
@@ -61,8 +68,8 @@ internal object ReweProducts {
         }
         if (item["weightArticle"].bool == true) conditions += Conditions.weightPrice("per kg")!!
         Conditions.variants(listOfNotNull(name, description).joinToString(" "))?.let { conditions += it }
+        Conditions.footnote(name)?.let { conditions += it }
 
-        val single = standard ?: crossed
         if ((minQty != null || conditions.any { it.type == ConditionType.MULTI_BUY }) && single != null && single > promo) {
             tiers += PriceTier("1 ${minQty?.unit ?: "Stk."}", single)
         }

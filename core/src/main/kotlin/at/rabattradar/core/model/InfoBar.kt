@@ -31,20 +31,25 @@ private fun money(v: Double) = "€" + String.format(Locale.US, "%.2f", v)
 fun Offer.infoBar(): InfoBar {
     val multi = condition(ConditionType.MULTI_BUY)
     val minQty = condition(ConditionType.MIN_QUANTITY)
-    val loyalty = conditions.firstOrNull {
-        it.type == ConditionType.LOYALTY_APP || it.type == ConditionType.LOYALTY_CARD || it.type == ConditionType.APP_COUPON
-    }
+    // jö is the better known name when PENNY lists "jö Karte + PENNY App".
+    val loyalty = condition(ConditionType.LOYALTY_CARD) ?: condition(ConditionType.LOYALTY_APP) ?: condition(ConditionType.APP_COUPON)
     val weekdays = condition(ConditionType.WEEKDAYS)
     val unit = minQty?.unit ?: multi?.unit ?: "Stk."
 
-    val headline = when {
-        multi != null -> upper(multi.label)
-        loyalty != null -> when {
-            loyalty.label.equals("Lidl Plus", true) -> "LIDL PLUS"
-            loyalty.type == ConditionType.LOYALTY_CARD -> "jö PREIS"
-            loyalty.type == ConditionType.APP_COUPON -> "APP-GUTSCHEIN"
+    val withoutApp = tiers.firstOrNull { it.label.startsWith("ohne", ignoreCase = true) }
+    val loyaltyHeadline = loyalty?.let {
+        when {
+            it.label.equals("Lidl Plus", true) -> "LIDL PLUS"
+            it.type == ConditionType.LOYALTY_CARD -> "jö PREIS"
+            it.type == ConditionType.APP_COUPON -> "APP-GUTSCHEIN"
             else -> "APP-PREIS"
         }
+    }
+    // If the big price is the member price, that is the most important caveat and goes on top.
+    val headlineIsLoyalty = loyaltyHeadline != null && (withoutApp != null || multi == null)
+    val headline = when {
+        headlineIsLoyalty -> loyaltyHeadline!!
+        multi != null -> upper(multi.label)
         discountPercent != null && discountPercent > 0 -> "-$discountPercent%"
         has(ConditionType.CLEARANCE) -> "ABVERKAUF"
         else -> "AKTION"
@@ -53,16 +58,15 @@ fun Offer.infoBar(): InfoBar {
     val conditionLine = when {
         minQty != null -> upper(minQty.label) + " JE"
         multi != null && multi.quantity != null && !multi.inferred -> "BEI ${multi.quantity} ${upper(unit)} JE"
-        loyalty != null && (multi != null || discountPercent != null) -> "MIT ${upper(loyalty.label)}"
+        loyalty != null && !headlineIsLoyalty -> "MIT ${upper(loyalty.label)}"
         weekdays != null -> upper(weekdays.label)
         has(ConditionType.ONLINE_ONLY) -> "NUR ONLINE"
         has(ConditionType.WEIGHT_PRICE) -> "PER KG"
-        loyalty != null -> "MIT ${upper(loyalty.label)}"
+        headlineIsLoyalty && loyalty?.type == ConditionType.APP_COUPON -> "GUTSCHEIN AKTIVIEREN"
         else -> null
     }
 
     val single = tiers.firstOrNull { it.label.startsWith("1 ") || it.label.startsWith("Einzeln") }
-    val withoutApp = tiers.firstOrNull { it.label.startsWith("ohne", ignoreCase = true) }
     val reference = when {
         (multi != null || minQty != null) && single != null -> "1 ${upper(unit)} ${money(single.price)}"
         (multi != null || minQty != null) && regularPrice != null -> "1 ${upper(unit)} ${money(regularPrice)}"

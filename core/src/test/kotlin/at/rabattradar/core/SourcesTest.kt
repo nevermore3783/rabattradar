@@ -47,7 +47,9 @@ class SourcesTest {
         assertTrue(cheese.has(ConditionType.LOYALTY_CARD))
         assertEquals("bei 3 Becher", cheese.condition(ConditionType.MIN_QUANTITY)?.label)
         assertEquals(LocalDate.of(2026, 10, 28), cheese.validTo)
+        assertEquals("2+1 gratis", cheese.condition(ConditionType.MULTI_BUY)?.label)
         assertEquals("jö PREIS", cheese.infoBar().headline)
+        assertEquals("BEI 3 BECHER JE", cheese.infoBar().conditionLine)
 
         val beer = offers.single { it.name == "Helles" }
         assertEquals("ab 12 Fl.", beer.condition(ConditionType.MIN_QUANTITY)?.label)

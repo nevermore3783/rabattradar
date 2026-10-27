@@ -7,6 +7,7 @@ import at.rabattradar.core.model.SourceId
 import at.rabattradar.core.parse.Conditions
 import at.rabattradar.core.text.Text
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  * Combines offers from all sources:
@@ -120,7 +121,11 @@ object OfferMerger {
     }
 
     private fun adoptDates(shop: Offer, flyer: Offer): Offer {
-        val conditions = shop.conditions.filterNot { it.type == ConditionType.NO_DATES || it.type == ConditionType.WEEKDAYS }
+        // A flyer with the same promotion confirms it is a regular in-store offer.
+        val conditions = shop.conditions.filterNot {
+            it.type == ConditionType.NO_DATES || it.type == ConditionType.WEEKDAYS ||
+                (it.type == ConditionType.ONLINE_SHOP && SourceId.BILLA_SHOP in shop.sources)
+        }
         return shop.copy(
             validFrom = flyer.validFrom,
             validTo = flyer.validTo,
@@ -131,16 +136,16 @@ object OfferMerger {
 
     private fun combine(shop: Offer, flyer: Offer): Offer {
         val dated = if (shop.validTo == null && flyer.validTo != null) adoptDates(shop, flyer) else shop
-        val confirmed = dated.conditions.filterNot {
-            // The flyer confirms the shop promotion is a regular store offer.
-            it.type == ConditionType.ONLINE_SHOP && shop.sources.contains(SourceId.BILLA_SHOP)
-        }
+        val confirmed = dated.conditions.filterNot { it.type == ConditionType.ONLINE_SHOP && SourceId.BILLA_SHOP in shop.sources }
+        val regular = dated.regularPrice ?: flyer.regularPrice?.takeIf { it > dated.price }
         return dated.copy(
             banners = (dated.banners + flyer.banners).distinct(),
             description = dated.description ?: flyer.description,
             category = dated.category ?: flyer.category,
             unitPrice = dated.unitPrice ?: flyer.unitPrice,
-            regularPrice = dated.regularPrice ?: flyer.regularPrice?.takeIf { it > dated.price },
+            regularPrice = regular,
+            discountPercent = dated.discountPercent
+                ?: regular?.let { ((1 - dated.price / it) * 100).roundToInt() }?.takeIf { it in 1..95 },
             conditions = Conditions.merge(confirmed, flyer.conditions.filterNot { it.inferred }),
             imageUrl = dated.imageUrl ?: flyer.imageUrl,
             flyerImageUrl = flyer.flyerImageUrl,

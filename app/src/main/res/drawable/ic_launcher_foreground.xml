@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Price tag with radar waves. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFD500"
+        android:pathData="M26,58 L40,44 H70 Q74,44 74,48 V68 Q74,72 70,72 H40 Z" />
+    <path
+        android:fillColor="#FFE30613"
+        android:pathData="M38.5,58 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0" />
+    <path
+        android:strokeColor="#FFE30613"
+        android:strokeWidth="2.6"
+        android:pathData="M51,52 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0 M63,64 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0" />
+    <path
+        android:strokeColor="#FFE30613"
+        android:strokeWidth="2.6"
+        android:strokeLineCap="round"
+        android:pathData="M64,50 L50,66" />
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M64,34 A12,12 0 0 1 76,46 M64,26 A20,20 0 0 1 84,46" />
+</vector>

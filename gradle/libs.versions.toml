@@ -40,6 +40,7 @@ compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coil-test = { module = "io.coil-kt:coil-test", version.ref = "coil" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }

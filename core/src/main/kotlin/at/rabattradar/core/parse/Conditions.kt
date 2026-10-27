@@ -61,6 +61,29 @@ object Conditions {
     )
 
     /**
+     * "Bei 3 Packungen je 1.86" with a single price of 2.79 is mathematically a 2+1 offer even when the
+     * shop does not tag it as such: 3 x 1.86 = 2 x 2.79.
+     */
+    fun multiBuyFromSet(quantity: Int, promoPrice: Double, singlePrice: Double): Condition? {
+        if (quantity < 2 || singlePrice <= promoPrice) return null
+        for (free in 1 until quantity) {
+            if (abs(promoPrice * quantity - singlePrice * (quantity - free)) <= 0.011 * quantity) {
+                return multiBuyCondition(quantity - free, free)
+            }
+        }
+        return null
+    }
+
+    /** "Helles*" - an asterisk points to a footnote in the printed flyer. */
+    fun footnote(name: String): Condition? =
+        if (name.contains('*')) {
+            Condition(
+                ConditionType.NOTE, "Fußnote *",
+                "Im Flugblatt mit * markiert – es gilt eine Fußnote (z. B. nicht in allen Filialen, Pfand, keine weiteren Rabatte). Details im Flugblatt.",
+            )
+        } else null
+
+    /**
      * Minimum quantity from texts like "Bei 3 Tafeln je", "ab 2 Pkg. je", "Mengenvorteil ab 2 Stk. je",
      * "ab 2 6er-Träger je nur 4,14". [perSet] means the price only applies to complete sets.
      */
@@ -209,9 +232,9 @@ object Conditions {
             else -> "nur ${dayShort(from)}–${dayShort(to)}"
         }
         val detail = if (days == 1L) {
-            "Aktion gilt nur am ${dayLong(from)}, ${fmt(from)}."
+            "Aktion gilt nur am ${dayLong(from)}, ${fmt(from)}"
         } else {
-            "Aktion gilt nur von ${dayLong(from)}, ${fmt(from)} bis ${dayLong(to)}, ${fmt(to)}."
+            "Aktion gilt nur von ${dayLong(from)}, ${fmt(from)} bis ${dayLong(to)}, ${fmt(to)}"
         }
         return Condition(ConditionType.WEEKDAYS, label, detail)
     }
