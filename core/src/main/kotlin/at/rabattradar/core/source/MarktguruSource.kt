@@ -9,6 +9,7 @@ import at.rabattradar.core.model.SourceId
 import at.rabattradar.core.net.Http
 import at.rabattradar.core.net.HttpException
 import at.rabattradar.core.parse.Conditions
+import at.rabattradar.core.parse.Deposits
 import at.rabattradar.core.text.Text
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -188,7 +189,7 @@ class MarktguruSource(
             flyerImageUrl = "$CDN/offers/$id/images/default/0/large.webp",
             url = null,
             sources = listOf(SourceId.MARKTGURU),
-        )
+        ).withDeposit(Deposits.detect("$text ${o["categories"].arr.joinToString(" ") { it["name"].str.orEmpty() }}"))
     }
 
     companion object {

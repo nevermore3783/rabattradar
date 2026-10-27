@@ -10,7 +10,9 @@ import java.util.Locale
  * [ 1 TAFEL €4.99  ]   <- reference line (single / normal / without-app price)
  * [   2+1 GRATIS   ]   <- headline (deal type)
  * [ BEI 3 TAFELN JE]   <- condition line
- *        3.32          <- price
+ *   3.32  +€0.25 PFAND <- price, with the deposit in small print beside it
+ *         = €3.57
+ * [3 TAFELN = €9.96]   <- package price for multi-buys
  * ```
  */
 data class InfoBar(
@@ -18,6 +20,12 @@ data class InfoBar(
     val headline: String,
     val conditionLine: String?,
     val price: Double,
+    /** "+€0.25 PFAND" */
+    val depositLine: String?,
+    /** "= €3.57" - price including deposit. */
+    val withDepositLine: String?,
+    /** "3 TAFELN = €9.96" */
+    val packageLine: String?,
     /** Price needs a card/app - drawn in the loyalty colour. */
     val membership: Boolean,
     /** Headline is a guess (e.g. inferred 2+1). */
@@ -76,11 +84,21 @@ fun Offer.infoBar(): InfoBar {
         else -> null
     }
 
+    val depositAmount = deposit?.amount
+    val mark = if (deposit?.inferred == true) "?" else ""
+    val bundle = bundle()
     return InfoBar(
         reference = reference,
         headline = headline,
         conditionLine = conditionLine,
         price = price,
+        depositLine = when {
+            depositAmount != null -> "+${money(depositAmount)} PFAND$mark"
+            deposit != null -> "+ MEHRWEG-PFAND"
+            else -> null
+        },
+        withDepositLine = depositAmount?.let { "= ${money(price + it)}" },
+        packageLine = bundle?.let { "${upper(it.label)} = ${money(it.price)}" + if (it.inferred) "?" else "" },
         membership = loyalty != null,
         uncertain = multi?.inferred == true && minQty == null,
     )

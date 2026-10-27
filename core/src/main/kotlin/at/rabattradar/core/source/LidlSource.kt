@@ -8,6 +8,7 @@ import at.rabattradar.core.model.PriceTier
 import at.rabattradar.core.model.SourceId
 import at.rabattradar.core.net.Http
 import at.rabattradar.core.parse.Conditions
+import at.rabattradar.core.parse.Deposits
 import at.rabattradar.core.text.Text
 import kotlinx.serialization.json.JsonElement
 import kotlin.math.roundToInt
@@ -86,7 +87,6 @@ class LidlSource(private val http: Http) : OfferSource {
         Conditions.multiBuy(text)?.let { conditions += it }
         Conditions.weightPrice(packaging ?: "")?.let { conditions += it }
         Conditions.variants(text)?.let { conditions += it }
-        Conditions.deposit(text)?.let { conditions += it }
 
         val validFrom = g["storeStartDate"].lng?.let(::epochSecondsToDate)
         val validTo = g["storeEndDate"].lng?.let(::epochSecondsToDate)
@@ -122,7 +122,7 @@ class LidlSource(private val http: Http) : OfferSource {
             imageUrl = image,
             url = g["canonicalUrl"].str?.let { "$BASE$it" },
             sources = listOf(SourceId.LIDL_WEB),
-        )
+        ).withDeposit(Deposits.detect("$fullTitle ${description.orEmpty()} ${packaging.orEmpty()} ${category.orEmpty()}"))
     }
 
     companion object {

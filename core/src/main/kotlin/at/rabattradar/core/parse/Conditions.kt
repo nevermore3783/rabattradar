@@ -22,7 +22,6 @@ object Conditions {
     private val weight = Regex("""\b(per|je|pro)\s*(kg|kilo|kilogramm)\b""", RegexOption.IGNORE_CASE)
     private val variants = Regex("""\b(versch\.?|verschiedene|div\.?|diverse)\s+sorten\b""", RegexOption.IGNORE_CASE)
     private val onlineOnly = Regex("""nur\s+online|online\s+verf[üu]gbar|nur\s+im\s+online""", RegexOption.IGNORE_CASE)
-    private val deposit = Regex("""\b(pfand|mehrweg|einweg)""", RegexOption.IGNORE_CASE)
     private val lidlPlus = Regex("""lidl\s*plus""", RegexOption.IGNORE_CASE)
     private val sparApp = Regex("""spar[\s-]*app""", RegexOption.IGNORE_CASE)
     private val pennyApp = Regex("""penny[\s-]*app""", RegexOption.IGNORE_CASE)
@@ -179,9 +178,6 @@ object Conditions {
     fun variants(text: String): Condition? =
         if (variants.containsMatchIn(text)) Condition(ConditionType.VARIANTS, "versch. Sorten", "Der Preis gilt für mehrere Sorten/Varianten – nicht jede Sorte ist in jeder Filiale erhältlich.") else null
 
-    fun deposit(text: String): Condition? =
-        if (deposit.containsMatchIn(text)) Condition(ConditionType.DEPOSIT, "+ Pfand", "Zuzüglich Pfand (wird an der Kassa verrechnet).") else null
-
     /** All text-derivable conditions. */
     fun fromText(text: String, chain: Chain): List<Condition> = listOfNotNull(
         multiBuy(text),
@@ -189,7 +185,6 @@ object Conditions {
         onlineOnly(text),
         weightPrice(text),
         variants(text),
-        deposit(text),
     ) + membership(text, chain)
 
     /**

@@ -19,13 +19,15 @@ import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import at.rabattradar.core.Snapshot
 import at.rabattradar.core.model.Chain
-import at.rabattradar.core.model.Condition
 import at.rabattradar.core.model.ConditionType
+import at.rabattradar.core.model.DepositKind
 import at.rabattradar.core.model.Offer
 import at.rabattradar.core.model.PriceTier
 import at.rabattradar.core.model.SourceId
 import at.rabattradar.core.net.OkHttp
 import at.rabattradar.core.parse.Conditions
+import at.rabattradar.core.parse.Deposits
+import at.rabattradar.core.model.bundle
 import at.rabattradar.core.search.OfferQuery
 import at.rabattradar.core.search.SortOrder
 import at.rabattradar.core.search.ValidityFilter
@@ -219,6 +221,22 @@ class ScreenshotTest {
 
     @Test
     @Config(qualifiers = "w412dp-h2600dp-xxhdpi")
+    fun showcaseDetailDepositPackage() {
+        val s = snapshot()
+        assumeTrue(s != null)
+        val offer = s!!.offers.filter { it.deposit?.amount != null && it.bundle() != null && !it.deposit!!.inferred }
+            .maxByOrNull { it.bundle()!!.quantity } ?: return
+        installImages(download(listOfNotNull(offer.imageUrl, offer.flyerImageUrl) + logoUrls()))
+        compose.setContent {
+            RabattRadarTheme(dark = false) {
+                DetailScreen(offer = offer, today = today, favorite = false, onBack = {}, onToggleFavorite = {})
+            }
+        }
+        compose.onRoot().captureRoboImage("$out/showcase_detail_deposit.png")
+    }
+
+    @Test
+    @Config(qualifiers = "w412dp-h2600dp-xxhdpi")
     fun showcaseDetailLidlPlus() {
         val s = snapshot()
         assumeTrue(s != null)
@@ -273,10 +291,11 @@ class ScreenshotTest {
             validFrom = today.minusDays(6), validTo = today.plusDays(8),
         ),
         Offer(
-            id = "7", chain = Chain.BILLA, banners = listOf("BILLA"), name = "Gösser Naturradler Alkoholfrei 6x0,5", brand = "Gösser",
-            price = 5.34, regularPrice = 8.94, discountPercent = 40,
-            conditions = listOf(Condition(ConditionType.DEPOSIT, "+ 1,20 Pfand"), Condition(ConditionType.NO_DATES, "Datum unbekannt")),
-        ),
+            id = "7", chain = Chain.PENNY, banners = listOf("PENNY"), name = "Wieselburger Gold", quantity = "0,5 l Dose",
+            price = 0.79, regularPrice = 1.45, discountPercent = 46, tiers = listOf(PriceTier("1 Dose", 1.45)),
+            conditions = listOf(Conditions.minQuantity("ab 24 Dosen")!!),
+            validFrom = today.minusDays(5), validTo = today.plusDays(1),
+        ).withDeposit(Deposits.detect("0,5 l Dose Bier", DepositKind.SINGLE_USE)),
         Offer(
             id = "8", chain = Chain.LIDL, banners = listOf("Lidl"), name = "Monte Maxi", quantity = "4x 100 g", price = 1.39,
             regularPrice = 2.79, discountPercent = 50, tiers = listOf(PriceTier("Einzeln", 2.79)),

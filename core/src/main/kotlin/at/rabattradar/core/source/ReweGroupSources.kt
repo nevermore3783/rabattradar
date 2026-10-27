@@ -3,11 +3,13 @@ package at.rabattradar.core.source
 import at.rabattradar.core.model.Chain
 import at.rabattradar.core.model.Condition
 import at.rabattradar.core.model.ConditionType
+import at.rabattradar.core.model.DepositKind
 import at.rabattradar.core.model.Offer
 import at.rabattradar.core.model.PriceTier
 import at.rabattradar.core.model.SourceId
 import at.rabattradar.core.net.Http
 import at.rabattradar.core.parse.Conditions
+import at.rabattradar.core.parse.Deposits
 import at.rabattradar.core.text.Text
 import at.rabattradar.core.text.euro
 import kotlinx.serialization.json.JsonElement
@@ -38,13 +40,15 @@ internal object ReweProducts {
 
         val name = Text.clean(item["name"].str) ?: return null
         val brand = Text.clean(item["brand"]["name"].str)?.takeUnless { it.equals(banner, true) }
-        val description = Text.clean(item["descriptionShort"].str)
         val amount = item["amount"].str?.takeUnless { it.isBlank() || it == "0" }
-        val volume = item["volumeLabelShort"].str
+        val volume = item["volumeLabelShort"].str?.let { if (it.equals("liter", true)) "l" else it }
         val quantity = when {
-            amount != null && volume != null && volume.isNotBlank() -> "$amount $volume"
+            amount != null && volume != null && volume.isNotBlank() -> "${amount.replace('.', ',')} $volume"
             else -> Text.clean(item["packageLabel"].str)
         }
+        // PENNY often repeats the size as description ("0,5 l").
+        val description = Text.clean(item["descriptionShort"].str)
+            ?.takeUnless { quantity != null && it.replace(" ", "").equals(quantity.replace(" ", ""), ignoreCase = true) }
 
         val conditions = mutableListOf<Condition>()
         val tiers = mutableListOf<PriceTier>()
@@ -63,9 +67,6 @@ internal object ReweProducts {
         multiBuy?.let { conditions += it.copy(unit = minQty?.unit) }
         if ("pt-abverkauf" in tags) conditions += Condition(ConditionType.CLEARANCE, "Abverkauf", "Abverkaufsware – nur solange der Vorrat reicht.")
         if ("pt-satterrabatt" in tags) conditions += Condition(ConditionType.NOTE, "Satter Rabatt", "Aktion „Satter Rabatt“ laut ${banner}.")
-        if (deposit != null && deposit > 0) {
-            conditions += Condition(ConditionType.DEPOSIT, "+ ${deposit.euro()} Pfand", "Zuzüglich ${deposit.euro()} € Pfand (wird an der Kassa verrechnet).")
-        }
         if (item["weightArticle"].bool == true) conditions += Conditions.weightPrice("per kg")!!
         Conditions.variants(listOfNotNull(name, description).joinToString(" "))?.let { conditions += it }
         Conditions.footnote(name)?.let { conditions += it }
@@ -103,6 +104,20 @@ internal object ReweProducts {
             conditions += Condition(ConditionType.NOTE, campaign.replace(Regex("^bis zu -\\d+%\\s*"), ""), "Teil der Aktion „$campaign“.")
         }
 
+        val depositText = listOfNotNull(name, description, quantity, item["packageLabel"].str, category).joinToString(" ")
+        val badges = item["badges"].arr.mapNotNull { it.str }
+        val depositKind = when {
+            item["depositType"].str == "ONEWAY" || "isdeposittype-singleusedeposit" in badges -> DepositKind.SINGLE_USE
+            item["depositType"].str == "REUSABLE" || "isdeposittype-reusable" in badges -> DepositKind.REUSABLE
+            else -> null
+        }
+        val depositInfo = when {
+            deposit != null && deposit > 0 -> Deposits.stated(deposit, depositKind, depositText)
+            // BILLA states every deposit explicitly; PENNY only says ONEWAY/REUSABLE, so infer the amount.
+            source == SourceId.BILLA_SHOP -> null
+            else -> Deposits.detect(depositText, depositKind)
+        }
+
         return Offer(
             id = "${source.name.lowercase()}-$sku",
             chain = chain,
@@ -123,7 +138,7 @@ internal object ReweProducts {
             imageUrl = item["images"][0].str,
             url = item["slug"].str?.let { "$baseUrl/produkte/$it" },
             sources = listOf(source),
-        )
+        ).withDeposit(depositInfo)
     }
 
     suspend fun fetchAll(http: Http, url: (page: Int) -> String): List<JsonElement> {

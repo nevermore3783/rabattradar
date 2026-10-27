@@ -8,6 +8,7 @@ import at.rabattradar.core.model.PriceTier
 import at.rabattradar.core.model.SourceId
 import at.rabattradar.core.net.Http
 import at.rabattradar.core.parse.Conditions
+import at.rabattradar.core.parse.Deposits
 import at.rabattradar.core.text.Text
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -59,7 +60,6 @@ class SparShopSource(private val http: Http) : OfferSource {
             if (regular != null) tiers += PriceTier("1 ${it.unit}", regular)
         }
         if (v["item-type"].str == "WeightProduct") conditions += Conditions.weightPrice("per kg")!!
-        Conditions.deposit(name)?.let { conditions += it }
 
         val category = v["category-names"].str?.split('|')?.getOrNull(1)?.takeIf { it.isNotBlank() }
         return Offer(
@@ -84,6 +84,9 @@ class SparShopSource(private val http: Http) : OfferSource {
             imageUrl = v["image-url"].str,
             url = v["url"].str?.let { "https://www.interspar.at/shop/lebensmittel$it" },
             sources = listOf(SourceId.SPAR_SHOP),
+        ).withDeposit(
+            // short-description-3 carries "3.000 ML EINWEG mit Pfand" / "440 ML EINWEG ohne Pfand".
+            Deposits.detect("${v["name"].str.orEmpty()} $name ${quantity.orEmpty()} ${v["packing-type"].str.orEmpty()} ${category.orEmpty()}"),
         )
     }
 

@@ -88,6 +88,21 @@ data class Condition(
     val unit: String? = null,
 )
 
+@Serializable
+enum class DepositKind { SINGLE_USE, REUSABLE }
+
+/** Deposit (Pfand) charged on top of the advertised price. */
+@Serializable
+data class Deposit(
+    val kind: DepositKind,
+    /** Total deposit for one advertised unit (a 6-pack -> 6 x 0.25), null if unknown (reusable crates). */
+    val amount: Double?,
+    /** Number of bottles/cans in one advertised unit. */
+    val containers: Int = 1,
+    /** Derived from drink type, container and volume rather than stated by the source. */
+    val inferred: Boolean = false,
+)
+
 /** Alternative price shown next to the headline price, e.g. "1 Tafel 4.99" or "ohne Lidl Plus 1.89". */
 @Serializable
 data class PriceTier(val label: String, val price: Double)
@@ -116,6 +131,7 @@ data class Offer(
     /** Base price text, e.g. "1 kg = 5.79". */
     val unitPrice: String? = null,
     val conditions: List<Condition> = emptyList(),
+    val deposit: Deposit? = null,
     @Serializable(with = LocalDateSerializer::class) val validFrom: LocalDate? = null,
     @Serializable(with = LocalDateSerializer::class) val validTo: LocalDate? = null,
     /** Best image for the product (packshot if available, else flyer crop). */
@@ -133,6 +149,17 @@ data class Offer(
         get() = listOfNotNull(displayBrand, name).joinToString(" ")
 
     fun has(type: ConditionType) = conditions.any { it.type == type }
+
+    /** Advertised price plus deposit, if a deposit amount is known. */
+    val priceWithDeposit: Double?
+        get() = deposit?.amount?.let { price + it }
+
+    /** Sets the deposit and keeps the DEPOSIT condition in sync with it. */
+    fun withDeposit(d: Deposit?): Offer = copy(
+        deposit = d,
+        conditions = conditions.filterNot { it.type == ConditionType.DEPOSIT } +
+            listOfNotNull(d?.let { at.rabattradar.core.parse.Deposits.condition(it, price) }),
+    )
 
     fun condition(type: ConditionType) = conditions.firstOrNull { it.type == type }
 

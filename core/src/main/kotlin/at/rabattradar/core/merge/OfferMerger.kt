@@ -95,7 +95,7 @@ object OfferMerger {
                     banners = group.flatMap { it.banners }.distinct(),
                     description = group.mapNotNull { it.description }.maxByOrNull { it.length },
                     conditions = Conditions.merge(*group.map { it.conditions }.toTypedArray()),
-                )
+                ).withDeposit(group.mapNotNull { it.deposit }.minByOrNull { if (it.inferred) 1 else 0 })
             }
 
     private fun tokens(o: Offer): Set<String> =
@@ -138,6 +138,13 @@ object OfferMerger {
         val dated = if (shop.validTo == null && flyer.validTo != null) adoptDates(shop, flyer) else shop
         val confirmed = dated.conditions.filterNot { it.type == ConditionType.ONLINE_SHOP && SourceId.BILLA_SHOP in shop.sources }
         val regular = dated.regularPrice ?: flyer.regularPrice?.takeIf { it > dated.price }
+        val deposit = when {
+            dated.deposit != null && !dated.deposit.inferred -> dated.deposit
+            flyer.deposit != null && !flyer.deposit.inferred -> flyer.deposit
+            // BILLA states every deposit, so "none" there beats a guess from the flyer text.
+            SourceId.BILLA_SHOP in shop.sources -> dated.deposit
+            else -> dated.deposit ?: flyer.deposit
+        }
         return dated.copy(
             banners = (dated.banners + flyer.banners).distinct(),
             description = dated.description ?: flyer.description,
@@ -150,7 +157,7 @@ object OfferMerger {
             imageUrl = dated.imageUrl ?: flyer.imageUrl,
             flyerImageUrl = flyer.flyerImageUrl,
             sources = (dated.sources + flyer.sources).distinct(),
-        )
+        ).withDeposit(deposit)
     }
 
     private const val MIN_SCORE = 0.6

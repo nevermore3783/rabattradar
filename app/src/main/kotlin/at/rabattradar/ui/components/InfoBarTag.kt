@@ -106,9 +106,24 @@ fun InfoBarTag(offer: Offer, modifier: Modifier = Modifier, scale: Float = 1f) {
                 style = TextStyle(fontFamily = FlyerFont, fontWeight = FontWeight.Black, fontSize = s(17f), lineHeight = s(19f)),
                 modifier = Modifier.padding(top = d(2f), start = d(1f)),
             )
+            // Small print beside the price, like "zzgl. 0,25 Pfand" on the shelf label.
+            bar.depositLine?.let { deposit ->
+                Column(Modifier.padding(start = d(4f), top = d(5f))) {
+                    Text(deposit, color = SmallPrint, style = smallPrint(s(8.5f)), maxLines = 1)
+                    bar.withDepositLine?.let { Text(it, color = brand.price, style = smallPrint(s(10f)), maxLines = 1) }
+                }
+            }
+        }
+        bar.packageLine?.let {
+            Strip(it, PackageInk, Color.White, s(10f), d(5f), d(1.5f))
         }
     }
 }
+
+private val SmallPrint = Color(0xFF4A515C)
+private val PackageInk = Color(0xFF2B3440)
+
+private fun smallPrint(size: TextUnit) = TextStyle(fontFamily = FlyerFont, fontWeight = FontWeight.ExtraBold, fontSize = size, lineHeight = size)
 
 @Composable
 private fun Strip(text: String, bg: Color, fg: Color, size: TextUnit, hPad: Dp, vPad: Dp, strike: Boolean = false) {

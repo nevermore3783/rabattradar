@@ -42,12 +42,14 @@ fun main(args: Array<String>): Unit = runBlocking {
     opt("--search")?.let { term ->
         val hits = OfferIndex(snapshot.offers).search(OfferQuery(text = term, validity = ValidityFilter.ALL), ctx.today)
         println("\nSuche \"$term\": ${hits.size} Treffer")
-        hits.take(25).forEach { o ->
+        hits.take(opt("--limit")?.toIntOrNull() ?: 25).forEach { o ->
             val bar = o.infoBar()
             println(
-                "  [%-5s] %-45s %7s €  %-14s %-18s %-20s %s–%s  %s".format(
-                    o.chain.displayName, o.title.take(45), o.price.euro(),
-                    bar.headline, bar.conditionLine ?: "", bar.reference ?: "", o.validFrom ?: "?", o.validTo ?: "?",
+                "  [%-5s] %-42s %7s €  %-14s %-18s %-20s %-22s %-18s %s–%s  %s".format(
+                    o.chain.displayName, o.title.take(42), o.price.euro(),
+                    bar.headline, bar.conditionLine ?: "", bar.reference ?: "",
+                    listOfNotNull(bar.depositLine, bar.withDepositLine).joinToString(" "), bar.packageLine ?: "",
+                    o.validFrom ?: "?", o.validTo ?: "?",
                     o.conditions.joinToString(", ") { it.label },
                 ),
             )

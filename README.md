@@ -9,7 +9,9 @@ Every offer picture carries a **flyer-style info bar in the bottom-left corner**
 │ 1 TAFEL €4.99    │  reference price: single unit, without app, or crossed-out price
 │   2+1 GRATIS     │  deal: 2+1 GRATIS · -45% · LIDL PLUS · jö PREIS · APP-GUTSCHEIN
 │ BEI 3 TAFELN JE  │  condition: BEI 3 … JE · AB 2 PKG. JE · NUR FR & SA · MIT jö
-│       3³²        │  price, with the cents set as superscript
+│  3³²  +€0.25 PFAND│  price (cents as superscript); deposit and price incl. deposit in small print beside it
+│       = €3.57    │
+│ 3 TAFELN = €9.96 │  package price for multi-buys (2+1, 3+3, "ab 24 Dosen je")
 └──────────────────┘
 ```
 
@@ -26,6 +28,8 @@ The colours follow each chain's flyers. Lidl Plus and SPAR App prices get a yell
   - validity with weekdays and days left
   - the original flyer crop
   - the data sources, plus share and "open at store" buttons
+- **Package price** for multi-buys: "bei 3 Tafeln je 3.32" shows "3 Tafeln = 9.96 €", and 3+3 shows the price for 6 items. The detail screen adds the deposit and the total at the till ("18,96 € + 6,00 € Pfand = 24,96 €").
+- **Deposit (Pfand)** is added in small print next to the price ("+0,25 € Pfand = 1,04 €") for every eligible item. Multipacks count every container (6 × 0,25 €). See [Deposit rules](#deposit-rules).
 - **Every offer has a picture.** If none is available, or it fails to load, a generated tile in the chain colours is shown instead.
 - Works offline from the last snapshot. It refreshes automatically when the data is older than 4 h, and on pull-to-refresh.
 - The postal code setting selects regional flyers (e.g. BILLA Wien vs. other states).
@@ -76,6 +80,25 @@ A live run (27 Oct 2026, PLZ 1010) gave about **3,850 merged offers**, all with 
 - **HOFER and SPAR flyer items** rely on marktguru alone, so multi-buy conditions may be missing; the ⅔ heuristic only catches 2+1. Personalised jö coupons and the "Rabattsammler" are not covered, since they live inside the jö/BILLA apps behind a login.
 - Logos are loaded from marktguru's CDN and cached. While they load, or when offline before the first load, a drawn word mark in the chain colours is shown.
 - The endpoints can change at any time. When a source fails, the others still load and the app shows which one is missing.
+
+## Deposit rules
+
+These follow the Austrian Pfandverordnung (since 1 Jan 2025):
+
+- **€0.25 per plastic bottle or metal can** holding 0.1–3 l.
+- **Exempt**: milk and dairy drinks, beverage cartons (Tetra Pak, Elopak), glass one-way bottles, and containers under 0.1 l or over 3 l.
+- **Mehrweg** (reusable glass and crates) has product-specific amounts.
+
+| Signal | Example | Result |
+|---|---|---|
+| Shop field | BILLA `depositPrice` + `isdeposittype-*` | Exact amount (e.g. 1.20 € for a 6-pack of Mehrweg bottles) |
+| Flyer text | "zzgl. Pfand 8 x € 0,25 = € 2", "zzgl. Pfand € 0,25", "Preis exkl. Pfand", "EINWEG mit Pfand" | Stated amount |
+| Flyer text | "Pfandfrei", "EINWEG ohne Pfand" | No deposit |
+| Shop field | PENNY `depositType: ONEWAY/REUSABLE` | Amount from the rules + container (cans yes, glass beer no) |
+| Nothing stated | Soft drink, water or juice with volume, can/PET or no container; single 0.5 l beer | Inferred, shown with "?" |
+| Mehrweg without amount | "20 x 0,5-Liter-Mehrweg-Flasche" | "+ Mehrwegpfand" (amount unknown) |
+
+BILLA lists every deposit explicitly, so a BILLA shop item without one is trusted to have none; its 1 l Tetra Pak juices and glass bottled beer show no deposit, which is correct. Food containers ("Vorratsdose 1,5 l"), wine (grape names, vintages) and non-food ("Wasserkocher 1,7 l") are excluded.
 
 ## Project layout
 
