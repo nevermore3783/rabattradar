@@ -1,0 +1,425 @@
+{
+ "count": 4,
+ "total": 4,
+ "results": [
+  {
+   "amount": "750",
+   "brand": {
+    "name": "Frosch",
+    "slug": "frosch"
+   },
+   "bundleInfo": "",
+   "category": "WC- und Badreiniger",
+   "conversionFactor": 1000.0,
+   "descriptionLong": "",
+   "descriptionShort": "",
+   "inPromotion": true,
+   "images": [
+    "https://images.cdn.europe-west1.gcp.commercetools.com/723b2575-66c7-4d92-ae49-82bf1d168d26/00-100696-382500713-SN-KyOSQ.jpg",
+    "https://images.cdn.europe-west1.gcp.commercetools.com/723b2575-66c7-4d92-ae49-82bf1d168d26/00-100696-0128058444-bUZyjFNS.jpg"
+   ],
+   "name": "Frosch WC Essigreiniger",
+   "packageLabel": "Flasche",
+   "packageLabelKey": "fl",
+   "parentCategories": [
+    [
+     {
+      "key": "15320",
+      "name": "Küche, Haushalt & Garten",
+      "slug": "kueche-haushalt-und-garten-15320",
+      "orderHint": "000000130"
+     },
+     {
+      "key": "15335",
+      "name": "Putzen & Reinigen",
+      "slug": "putzen-und-reinigen-15335",
+      "orderHint": "000000050"
+     },
+     {
+      "key": "15337",
+      "name": "WC- und Badreiniger",
+      "slug": "wc-und-badreiniger-15337",
+      "orderHint": "000000020"
+     }
+    ]
+   ],
+   "price": {
+    "baseUnitLong": "Liter",
+    "baseUnitShort": "Liter",
+    "basePriceFactor": "1",
+    "crossed": 339,
+    "discountPercentage": -25,
+    "regular": {
+     "perStandardizedQuantity": 339,
+     "promotionBasePrice": 452,
+     "promotionValue": 339,
+     "tags": [
+      "pt-satterrabatt"
+     ],
+     "value": 254
+    },
+    "standard": {
+     "perStandardizedQuantity": 452,
+     "value": 339
+    },
+    "lowestPrice": 339
+   },
+   "productId": "a362b328-33d0-472b-b761-adf0145ba674",
+   "medical": false,
+   "sku": "00-100696",
+   "slug": "frosch-wc-essigreiniger-00100696",
+   "upsellSku": "",
+   "published": true,
+   "purchased": false,
+   "volumeLabelKey": "ml",
+   "volumeLabelLong": "Milliliter",
+   "volumeLabelShort": "ml",
+   "weight": 0.802,
+   "weightArticle": false,
+   "weightPieceArticle": false,
+   "weightPerPiece": 0,
+   "alcoholByVolume": "",
+   "brandMarketing": "",
+   "countryOfOrigin": "Deutschland",
+   "features": "",
+   "keywordSearch": "",
+   "meatBorn": "",
+   "meatButchered": "",
+   "meatSlaughtered": "",
+   "meatRaised": "",
+   "nappySize": "",
+   "nutIngredients": "",
+   "regulatedProductName": "",
+   "storageType": "",
+   "telephoneHelpline": "",
+   "wineColour": "",
+   "wineType": "",
+   "variety": "",
+   "sponsored": false,
+   "maxQuantity": 6
+  },
+  {
+   "amount": "1",
+   "brand": {
+    "name": "Rauch",
+    "slug": "rauch"
+   },
+   "bundleInfo": "",
+   "category": "Frucht- & Gemüsesäfte",
+   "conversionFactor": 1.0,
+   "depositType": "ONEWAY",
+   "descriptionLong": "",
+   "descriptionShort": "",
+   "inPromotion": true,
+   "images": [
+    "https://images.cdn.europe-west1.gcp.commercetools.com/723b2575-66c7-4d92-ae49-82bf1d168d26/00-10351-01551307108-YlRS9oQJ.jpg"
+   ],
+   "name": "Rauch Happy Day Apfelsaft",
+   "packageLabel": "Packung",
+   "packageLabelKey": "pa",
+   "parentCategories": [
+    [
+     {
+      "key": "13784",
+      "name": "Getränke",
+      "slug": "getraenke-13784",
+      "orderHint": "000000070"
+     },
+     {
+      "key": "13785",
+      "name": "Alkoholfreie Getränke",
+      "slug": "alkoholfreie-getraenke-13785",
+      "orderHint": "000000350"
+     },
+     {
+      "key": "13789",
+      "name": "Frucht- & Gemüsesäfte",
+      "slug": "frucht-und-gemuesesaefte-13789",
+      "orderHint": "000000410"
+     }
+    ]
+   ],
+   "price": {
+    "baseUnitLong": "Liter",
+    "baseUnitShort": "Liter",
+    "basePriceFactor": "1",
+    "crossed": 279,
+    "discountPercentage": -33,
+    "regular": {
+     "perStandardizedQuantity": 186,
+     "promotionQuantity": 3.0,
+     "standardizedPromotionQuantity": 3,
+     "promotionText": "Bei 3 Packungen je",
+     "promotionType": "PER_SET_OF",
+     "promotionBasePrice": 279,
+     "promotionValue": 279,
+     "tags": [
+      "pt-2plus1",
+      "pt-multi"
+     ],
+     "value": 186
+    },
+    "standard": {
+     "perStandardizedQuantity": 279,
+     "value": 279
+    }
+   },
+   "productId": "c3d80b95-5a65-4c01-95f3-1d1e67205e4c",
+   "medical": false,
+   "sku": "00-10351",
+   "slug": "rauch-happy-day-apfelsaft-0010351",
+   "upsellSku": "00-883119",
+   "published": true,
+   "purchased": false,
+   "volumeLabelKey": "lt",
+   "volumeLabelLong": "Liter",
+   "volumeLabelShort": "liter",
+   "weight": 1.05,
+   "weightArticle": false,
+   "weightPieceArticle": false,
+   "weightPerPiece": 0,
+   "alcoholByVolume": "",
+   "brandMarketing": "",
+   "countryOfOrigin": "Österreich",
+   "features": "",
+   "keywordSearch": "",
+   "meatBorn": "",
+   "meatButchered": "",
+   "meatSlaughtered": "",
+   "meatRaised": "",
+   "nappySize": "",
+   "nutIngredients": "",
+   "badges": [
+    "pp-veget",
+    "pp-vegan",
+    "homecountry"
+   ],
+   "regulatedProductName": "",
+   "storageType": "",
+   "telephoneHelpline": "",
+   "wineColour": "",
+   "wineType": "",
+   "variety": "",
+   "sponsored": false,
+   "maxQuantity": 36
+  },
+  {
+   "amount": "300",
+   "brand": {
+    "name": "Milka",
+    "slug": "milka"
+   },
+   "bundleInfo": "",
+   "category": "Tafelschokolade",
+   "conversionFactor": 100.0,
+   "descriptionLong": "",
+   "descriptionShort": "",
+   "inPromotion": true,
+   "images": [
+    "https://images.cdn.europe-west1.gcp.commercetools.com/723b2575-66c7-4d92-ae49-82bf1d168d26/00-890673-1799504585-8JjIeph_.jpg"
+   ],
+   "name": "Milka Oreo",
+   "packageLabel": "Tafel",
+   "packageLabelKey": "tf",
+   "parentCategories": [
+    [
+     {
+      "key": "15809",
+      "name": "Süßes & Salziges",
+      "slug": "suesses-und-salziges-15809",
+      "orderHint": "000000095"
+     },
+     {
+      "key": "15815",
+      "name": "Süßes",
+      "slug": "suesses-15815",
+      "orderHint": "000000060"
+     },
+     {
+      "key": "15827",
+      "name": "Tafelschokolade",
+      "slug": "tafelschokolade-15827",
+      "orderHint": "000000010"
+     }
+    ]
+   ],
+   "price": {
+    "baseUnitLong": "Gramm",
+    "baseUnitShort": "g",
+    "basePriceFactor": "100",
+    "crossed": 499,
+    "discountPercentage": -33,
+    "regular": {
+     "perStandardizedQuantity": 111,
+     "promotionQuantity": 3.0,
+     "standardizedPromotionQuantity": 3,
+     "promotionText": "Bei 3 Tafeln je",
+     "promotionType": "PER_SET_OF",
+     "promotionBasePrice": 166,
+     "promotionValue": 499,
+     "tags": [
+      "pt-2plus1",
+      "pt-multi"
+     ],
+     "value": 332
+    },
+    "standard": {
+     "perStandardizedQuantity": 166,
+     "value": 499
+    }
+   },
+   "productId": "1cc03dc8-353d-4a5a-b592-54c66f71c1c1",
+   "medical": false,
+   "sku": "00-890673",
+   "slug": "milka-oreo-00890673",
+   "upsellSku": "",
+   "published": true,
+   "purchased": false,
+   "volumeLabelKey": "gr",
+   "volumeLabelLong": "Gramm",
+   "volumeLabelShort": "g",
+   "weight": 0.304,
+   "weightArticle": false,
+   "weightPieceArticle": false,
+   "weightPerPiece": 0,
+   "alcoholByVolume": "",
+   "brandMarketing": "",
+   "countryOfOrigin": "",
+   "features": "",
+   "keywordSearch": "",
+   "meatBorn": "",
+   "meatButchered": "",
+   "meatSlaughtered": "",
+   "meatRaised": "",
+   "nappySize": "",
+   "nutIngredients": "",
+   "badges": [
+    "homecountry"
+   ],
+   "regulatedProductName": "",
+   "storageType": "",
+   "telephoneHelpline": "",
+   "wineColour": "",
+   "wineType": "",
+   "variety": "",
+   "sponsored": false,
+   "maxQuantity": 6
+  },
+  {
+   "amount": "3",
+   "brand": {
+    "name": "Gösser",
+    "slug": "goesser"
+   },
+   "bundleInfo": "",
+   "category": "Alkoholfreie Alternativen",
+   "conversionFactor": 0.5,
+   "depositType": "REUSABLE",
+   "descriptionLong": "",
+   "descriptionShort": "",
+   "inPromotion": true,
+   "images": [
+    "https://images.cdn.europe-west1.gcp.commercetools.com/723b2575-66c7-4d92-ae49-82bf1d168d26/00-392725-885607526-JRY-D1s0.jpg"
+   ],
+   "name": "Gösser Naturradler Alkoholfrei 6x0,5",
+   "packageLabel": "Packung",
+   "packageLabelKey": "pa",
+   "parentCategories": [
+    [
+     {
+      "key": "13784",
+      "name": "Getränke",
+      "slug": "getraenke-13784",
+      "orderHint": "000000070"
+     },
+     {
+      "key": "15618",
+      "name": "Radler & Cider",
+      "slug": "radler-und-cider-15618",
+      "orderHint": "000000380"
+     },
+     {
+      "key": "15621",
+      "name": "Alkoholfreie Alternativen",
+      "slug": "alkoholfreie-alternativen-15621",
+      "orderHint": "000000030"
+     }
+    ],
+    [
+     {
+      "key": "13784",
+      "name": "Getränke",
+      "slug": "getraenke-13784",
+      "orderHint": "000000070"
+     },
+     {
+      "key": "15663",
+      "name": "Mehrweg",
+      "slug": "mehrweg-15663",
+      "orderHint": "000000750"
+     }
+    ]
+   ],
+   "price": {
+    "baseUnitLong": "Milliliter",
+    "baseUnitShort": "ml",
+    "basePriceFactor": "500",
+    "depositPrice": 120,
+    "crossed": 894,
+    "discountPercentage": -40,
+    "regular": {
+     "perStandardizedQuantity": 89,
+     "promotionBasePrice": 149,
+     "promotionValue": 894,
+     "tags": [
+      "pt-aktion"
+     ],
+     "value": 534
+    },
+    "standard": {
+     "perStandardizedQuantity": 149,
+     "value": 894
+    }
+   },
+   "productId": "f3877a62-4c18-40b9-8043-8298be006f9c",
+   "medical": false,
+   "sku": "00-392725",
+   "slug": "goesser-naturradler-alkoholfrei-6x05-00392725",
+   "upsellSku": "",
+   "published": true,
+   "purchased": false,
+   "volumeLabelKey": "lt",
+   "volumeLabelLong": "Liter",
+   "volumeLabelShort": "liter",
+   "weight": 5.42,
+   "weightArticle": false,
+   "weightPieceArticle": false,
+   "weightPerPiece": 0,
+   "alcoholByVolume": "0.0",
+   "brandMarketing": "",
+   "countryOfOrigin": "Österreich",
+   "features": "",
+   "keywordSearch": "",
+   "meatBorn": "",
+   "meatButchered": "",
+   "meatSlaughtered": "",
+   "meatRaised": "",
+   "nappySize": "",
+   "nutIngredients": "",
+   "badges": [
+    "isdeposittype-reusable",
+    "pp-vegan",
+    "homecountry"
+   ],
+   "regulatedProductName": "",
+   "storageType": "",
+   "telephoneHelpline": "",
+   "wineColour": "",
+   "wineType": "",
+   "variety": "",
+   "sponsored": false,
+   "maxQuantity": 6,
+   "quantityStepSize": 1
+  }
+ ]
+}

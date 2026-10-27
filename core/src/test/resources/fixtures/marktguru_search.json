@@ -1,0 +1,572 @@
+{
+ "totalResults": 7,
+ "results": [
+  {
+   "brand": {
+    "uniqueName": "spar",
+    "indexOffer": false,
+    "indexLeaflet": false,
+    "id": 5112,
+    "name": "Spar",
+    "industryId": 14
+   },
+   "advertisers": [
+    {
+     "uniqueName": "spar",
+     "indexOffer": true,
+     "indexLeaflet": true,
+     "id": "retailers/12816",
+     "name": "SPAR",
+     "industryId": 14
+    }
+   ],
+   "categories": [
+    {
+     "uniqueName": null,
+     "indexOffer": false,
+     "indexLeaflet": false,
+     "id": 250,
+     "name": "Softdrinks",
+     "description": null,
+     "parentId": 47
+    }
+   ],
+   "id": 3456056,
+   "description": "Pfirsich oder Zitrone 0,75-Liter-Elopak und jetzt neu: Fruity Dragon",
+   "volume": 0.75,
+   "quantity": 1.0,
+   "isMultiProduct": true,
+   "price": 0.66,
+   "oldPrice": 0.99,
+   "referencePrice": 0.88,
+   "requiresLoyalityMembership": false,
+   "leafletFlightId": 45851,
+   "validityDates": [
+    {
+     "from": "2026-10-21T22:00:00Z",
+     "to": "2026-11-04T22:59:00Z"
+    }
+   ],
+   "externalId": null,
+   "externalTrackingUrls": [],
+   "externalTrackings": [],
+   "externalUrl": null,
+   "trackFlightImpression": null,
+   "type": "standard",
+   "industries": [
+    {
+     "id": 14,
+     "name": "Supermarkt"
+    }
+   ],
+   "product": {
+    "id": 59011,
+    "name": "Eistee",
+    "description": null
+   },
+   "unit": {
+    "shortName": "l",
+    "id": 1,
+    "name": "Liter"
+   },
+   "images": {
+    "count": 1,
+    "isCdnSuccessfullyPurged": null,
+    "metadata": [
+     {
+      "aspectRatio": 0.7577197149643705,
+      "width": 1.0,
+      "height": 1.3197492163009403
+     }
+    ]
+   },
+   "imageType": "offer"
+  },
+  {
+   "brand": {
+    "uniqueName": "goesser",
+    "indexOffer": true,
+    "indexLeaflet": false,
+    "id": 4360,
+    "name": "Gösser",
+    "industryId": 16
+   },
+   "advertisers": [
+    {
+     "uniqueName": "lidl",
+     "indexOffer": true,
+     "indexLeaflet": true,
+     "id": "retailers/12769",
+     "name": "Lidl",
+     "industryId": 16
+    }
+   ],
+   "categories": [
+    {
+     "uniqueName": null,
+     "indexOffer": false,
+     "indexLeaflet": false,
+     "id": 252,
+     "name": "Bier",
+     "description": null,
+     "parentId": 54
+    }
+   ],
+   "id": 3465347,
+   "description": "HINWEIS: MIT LIDL PLUS APP 14,00 € 20 x 0,5 l",
+   "volume": 0.5,
+   "quantity": 20.0,
+   "isMultiProduct": false,
+   "price": 14.8,
+   "oldPrice": null,
+   "referencePrice": 1.48,
+   "requiresLoyalityMembership": false,
+   "leafletFlightId": 46079,
+   "validityDates": [
+    {
+     "from": "2026-10-28T23:00:00Z",
+     "to": "2026-10-31T22:59:00Z"
+    }
+   ],
+   "externalId": null,
+   "externalTrackingUrls": [],
+   "externalTrackings": [],
+   "externalUrl": null,
+   "trackFlightImpression": null,
+   "type": "standard",
+   "industries": [
+    {
+     "id": 16,
+     "name": "Discounter"
+    }
+   ],
+   "product": {
+    "id": 26728,
+    "name": "Märzen",
+    "description": null
+   },
+   "unit": {
+    "shortName": "l",
+    "id": 1,
+    "name": "Liter"
+   },
+   "images": {
+    "count": 1,
+    "isCdnSuccessfullyPurged": null,
+    "metadata": [
+     {
+      "aspectRatio": 0.33905579399141633,
+      "width": 1.0,
+      "height": 2.949367088607595
+     }
+    ]
+   },
+   "imageType": "offer"
+  },
+  {
+   "brand": {
+    "uniqueName": "eristoff",
+    "indexOffer": true,
+    "indexLeaflet": false,
+    "id": 11616,
+    "name": "Eristoff",
+    "industryId": 16
+   },
+   "advertisers": [
+    {
+     "uniqueName": "penny",
+     "indexOffer": true,
+     "indexLeaflet": true,
+     "id": "retailers/12802",
+     "name": "PENNY",
+     "industryId": 16
+    }
+   ],
+   "categories": [
+    {
+     "uniqueName": null,
+     "indexOffer": false,
+     "indexLeaflet": false,
+     "id": 445,
+     "name": "Wodka",
+     "description": null,
+     "parentId": 256
+    }
+   ],
+   "id": 3462236,
+   "description": "HINWEIS: MIT PENNY APP + JÖ KARTE 9.49 € od. RED 38 % vol. od. 18 % vol., 0,7 l",
+   "volume": 0.7,
+   "quantity": 1.0,
+   "isMultiProduct": true,
+   "price": 9.99,
+   "oldPrice": null,
+   "referencePrice": 14.27,
+   "requiresLoyalityMembership": false,
+   "leafletFlightId": 46073,
+   "validityDates": [
+    {
+     "from": "2026-10-28T23:00:00Z",
+     "to": "2026-11-04T22:59:00Z"
+    }
+   ],
+   "externalId": null,
+   "externalTrackingUrls": [],
+   "externalTrackings": [],
+   "externalUrl": null,
+   "trackFlightImpression": null,
+   "type": "standard",
+   "industries": [
+    {
+     "id": 16,
+     "name": "Discounter"
+    }
+   ],
+   "product": {
+    "id": 41945,
+    "name": "Vodka",
+    "description": null
+   },
+   "unit": {
+    "shortName": "l",
+    "id": 1,
+    "name": "Liter"
+   },
+   "images": {
+    "count": 1,
+    "isCdnSuccessfullyPurged": null,
+    "metadata": [
+     {
+      "aspectRatio": 0.44922547332185886,
+      "width": 1.0,
+      "height": 2.2260536398467434
+     }
+    ]
+   },
+   "imageType": "offer"
+  },
+  {
+   "brand": {
+    "uniqueName": "thisisnobrand123",
+    "indexOffer": false,
+    "indexLeaflet": false,
+    "id": 1617,
+    "name": "thisisnobrand123",
+    "industryId": 16
+   },
+   "advertisers": [
+    {
+     "uniqueName": "hofer",
+     "indexOffer": true,
+     "indexLeaflet": true,
+     "id": "retailers/12747",
+     "name": "HOFER",
+     "industryId": 16
+    }
+   ],
+   "categories": [
+    {
+     "uniqueName": null,
+     "indexOffer": false,
+     "indexLeaflet": false,
+     "id": 569,
+     "name": "Beeren",
+     "description": null,
+     "parentId": 311
+    }
+   ],
+   "id": 3471413,
+   "description": "Klasse I 300 g",
+   "volume": 0.3,
+   "quantity": 1.0,
+   "isMultiProduct": false,
+   "price": 1.99,
+   "oldPrice": 3.99,
+   "referencePrice": 6.63,
+   "requiresLoyalityMembership": false,
+   "leafletFlightId": 46172,
+   "validityDates": [
+    {
+     "from": "2026-10-29T23:00:00Z",
+     "to": "2026-10-31T22:59:00Z"
+    }
+   ],
+   "externalId": null,
+   "externalTrackingUrls": [],
+   "externalTrackings": [],
+   "externalUrl": null,
+   "trackFlightImpression": null,
+   "type": "standard",
+   "industries": [
+    {
+     "id": 16,
+     "name": "Discounter"
+    }
+   ],
+   "product": {
+    "id": 4196,
+    "name": "Heidelbeeren",
+    "description": null
+   },
+   "unit": {
+    "shortName": "kg",
+    "id": 2,
+    "name": "Kilogramm"
+   },
+   "images": {
+    "count": 1,
+    "isCdnSuccessfullyPurged": null,
+    "metadata": [
+     {
+      "aspectRatio": 1.7855946398659968,
+      "width": 1.0,
+      "height": 0.5600375234521576
+     }
+    ]
+   },
+   "imageType": "offer"
+  },
+  {
+   "brand": {
+    "uniqueName": "spar-natur-pur",
+    "indexOffer": true,
+    "indexLeaflet": false,
+    "id": 4643,
+    "name": "Spar Natur pur",
+    "industryId": 14
+   },
+   "advertisers": [
+    {
+     "uniqueName": "spar",
+     "indexOffer": true,
+     "indexLeaflet": true,
+     "id": "retailers/12816",
+     "name": "SPAR",
+     "industryId": 14
+    }
+   ],
+   "categories": [
+    {
+     "uniqueName": null,
+     "indexOffer": false,
+     "indexLeaflet": false,
+     "id": 601,
+     "name": "Brot",
+     "description": null,
+     "parentId": 340
+    }
+   ],
+   "id": 3455342,
+   "description": "HINWEIS: MIT SPAR-APP-GUTSCHEIN 2.15 € aus purem Bio-Roggenmehl hergestellt 500 g.",
+   "volume": 0.5,
+   "quantity": 1.0,
+   "isMultiProduct": false,
+   "price": 2.37,
+   "oldPrice": null,
+   "referencePrice": 4.74,
+   "requiresLoyalityMembership": false,
+   "leafletFlightId": 45851,
+   "validityDates": [
+    {
+     "from": "2026-10-21T22:00:00Z",
+     "to": "2026-11-04T22:59:00Z"
+    }
+   ],
+   "externalId": null,
+   "externalTrackingUrls": [],
+   "externalTrackings": [],
+   "externalUrl": null,
+   "trackFlightImpression": null,
+   "type": "standard",
+   "industries": [
+    {
+     "id": 14,
+     "name": "Supermarkt"
+    }
+   ],
+   "product": {
+    "id": 9535,
+    "name": "Bio-Roggenbrot",
+    "description": null
+   },
+   "unit": {
+    "shortName": "kg",
+    "id": 2,
+    "name": "Kilogramm"
+   },
+   "images": {
+    "count": 1,
+    "isCdnSuccessfullyPurged": null,
+    "metadata": [
+     {
+      "aspectRatio": 0.8543417366946778,
+      "width": 1.0,
+      "height": 1.1704918032786886
+     }
+    ]
+   },
+   "imageType": "offer"
+  },
+  {
+   "brand": {
+    "uniqueName": "spar",
+    "indexOffer": false,
+    "indexLeaflet": false,
+    "id": 5112,
+    "name": "Spar",
+    "industryId": 14
+   },
+   "advertisers": [
+    {
+     "uniqueName": "spar",
+     "indexOffer": true,
+     "indexLeaflet": true,
+     "id": "retailers/12816",
+     "name": "SPAR",
+     "industryId": 14
+    }
+   ],
+   "categories": [
+    {
+     "uniqueName": null,
+     "indexOffer": false,
+     "indexLeaflet": false,
+     "id": 201,
+     "name": "Geflügel",
+     "description": null,
+     "parentId": 58
+    }
+   ],
+   "id": 3456023,
+   "description": "aus Österreich, extra-dünn geschnitten, in Selbstbedienung, 480-g-Pkg.",
+   "volume": 0.48,
+   "quantity": 1.0,
+   "isMultiProduct": false,
+   "price": 5.79,
+   "oldPrice": 8.19,
+   "referencePrice": 12.06,
+   "requiresLoyalityMembership": false,
+   "leafletFlightId": 45851,
+   "validityDates": [
+    {
+     "from": "2026-10-21T22:00:00Z",
+     "to": "2026-11-04T22:59:00Z"
+    }
+   ],
+   "externalId": null,
+   "externalTrackingUrls": [],
+   "externalTrackings": [],
+   "externalUrl": null,
+   "trackFlightImpression": null,
+   "type": "standard",
+   "industries": [
+    {
+     "id": 14,
+     "name": "Supermarkt"
+    }
+   ],
+   "product": {
+    "id": 71012,
+    "name": "Feinstes Geflügel Hendl-Filetschnitzel",
+    "description": null
+   },
+   "unit": {
+    "shortName": "kg",
+    "id": 2,
+    "name": "Kilogramm"
+   },
+   "images": {
+    "count": 1,
+    "isCdnSuccessfullyPurged": null,
+    "metadata": [
+     {
+      "aspectRatio": 1.503725782414307,
+      "width": 1.0,
+      "height": 0.6650148662041625
+     }
+    ]
+   },
+   "imageType": "offer"
+  },
+  {
+   "brand": {
+    "uniqueName": "spar",
+    "indexOffer": false,
+    "indexLeaflet": false,
+    "id": 5112,
+    "name": "Spar",
+    "industryId": 14
+   },
+   "advertisers": [
+    {
+     "uniqueName": "spar-gourmet",
+     "indexOffer": true,
+     "indexLeaflet": true,
+     "id": "retailers/12817",
+     "name": "SPAR-Gourmet",
+     "industryId": 14
+    }
+   ],
+   "categories": [
+    {
+     "uniqueName": null,
+     "indexOffer": false,
+     "indexLeaflet": false,
+     "id": 201,
+     "name": "Geflügel",
+     "description": null,
+     "parentId": 58
+    }
+   ],
+   "id": 3455147,
+   "description": "aus Österreich, extra dünn geschnitten, in Selbstbedienung, 480-g-Packung",
+   "volume": 0.48,
+   "quantity": 1.0,
+   "isMultiProduct": false,
+   "price": 5.79,
+   "oldPrice": 8.19,
+   "referencePrice": 12.06,
+   "requiresLoyalityMembership": false,
+   "leafletFlightId": 45842,
+   "validityDates": [
+    {
+     "from": "2026-10-21T22:00:00Z",
+     "to": "2026-11-04T22:59:00Z"
+    }
+   ],
+   "externalId": null,
+   "externalTrackingUrls": [],
+   "externalTrackings": [],
+   "externalUrl": null,
+   "trackFlightImpression": null,
+   "type": "standard",
+   "industries": [
+    {
+     "id": 14,
+     "name": "Supermarkt"
+    }
+   ],
+   "product": {
+    "id": 71012,
+    "name": "Feinstes Geflügel Hendl-Filetschnitzel",
+    "description": null
+   },
+   "unit": {
+    "shortName": "kg",
+    "id": 2,
+    "name": "Kilogramm"
+   },
+   "images": {
+    "count": 1,
+    "isCdnSuccessfullyPurged": null,
+    "metadata": [
+     {
+      "aspectRatio": 1.4833333333333334,
+      "width": 1.0,
+      "height": 0.6741573033707865
+     }
+    ]
+   },
+   "imageType": "offer"
+  }
+ ]
+}

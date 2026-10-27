@@ -1,0 +1,333 @@
+{
+ "count": 3,
+ "total": 3,
+ "results": [
+  {
+   "amount": "150",
+   "brand": {
+    "name": "Bresso",
+    "slug": "bresso"
+   },
+   "bundleInfo": "",
+   "category": "Käse, Aufstriche & Salate",
+   "conversionFactor": 100.0,
+   "descriptionLong": "",
+   "descriptionShort": "div. Sorten; Den Gutschein zu diesem Angebot findest du exklusiv in der PENNY App.",
+   "inPromotion": false,
+   "images": [
+    "https://images.cdn.europe-west1.gcp.commercetools.com/787b77ab-692c-4e25-91f4-697690dc3c7c/78-10722-0147400750-dm_A93QB.jpg"
+   ],
+   "name": "Frischkäse Knoblauch",
+   "packageLabel": "Becher",
+   "packageLabelKey": "be",
+   "parentCategories": [
+    [
+     {
+      "key": "13032",
+      "name": "Kühlwaren",
+      "slug": "kuehlwaren-13032",
+      "orderHint": "000000040"
+     },
+     {
+      "key": "13038",
+      "name": "Käse, Aufstriche & Salate",
+      "slug": "kaese-aufstriche-und-salate-13038",
+      "orderHint": "000000020"
+     }
+    ],
+    [
+     {
+      "key": "99000000",
+      "name": "Alle Angebote",
+      "slug": "alle-angebote-99000000",
+      "orderHint": "000000201"
+     },
+     {
+      "key": "99013092",
+      "name": "Angebote ab 22.10.",
+      "slug": "angebote-ab-2210",
+      "orderHint": "000000010"
+     },
+     {
+      "key": "99013092101",
+      "name": "Wochenangebote",
+      "slug": "angebote-ab-2210-wochenangebote",
+      "orderHint": "000000020"
+     }
+    ]
+   ],
+   "price": {
+    "baseUnitLong": "Gramm",
+    "baseUnitShort": "g",
+    "basePriceFactor": "100",
+    "loyalty": {
+     "perStandardizedQuantity": 99,
+     "tags": [
+      "SO"
+     ],
+     "value": 149
+    },
+    "regular": {
+     "perStandardizedQuantity": 115,
+     "promotionQuantity": 3.0,
+     "standardizedPromotionQuantity": 3,
+     "promotionText": "bei 3 Becher",
+     "promotionType": "PER_SET_OF",
+     "tags": [
+      "pt-familie",
+      "pt-multi"
+     ],
+     "value": 172
+    },
+    "standard": {
+     "perStandardizedQuantity": 173,
+     "value": 259
+    },
+    "validityEnd": "2026-10-28",
+    "validityStart": "2026-10-22"
+   },
+   "productId": "3eb13d0a-0be6-4545-9616-48d6fdd3aaa7",
+   "medical": false,
+   "sku": "78-10722",
+   "slug": "frischkaese-knoblauch-7810722",
+   "upsellSku": "",
+   "published": true,
+   "purchased": false,
+   "volumeLabelKey": "gr",
+   "volumeLabelLong": "Gramm",
+   "volumeLabelShort": "g",
+   "weight": 0.163,
+   "weightArticle": false,
+   "weightPieceArticle": false,
+   "weightPerPiece": 0,
+   "alcoholByVolume": "",
+   "brandMarketing": "",
+   "countryOfOrigin": "Deutschland",
+   "features": "",
+   "keywordSearch": "",
+   "meatBorn": "",
+   "meatButchered": "",
+   "meatSlaughtered": "",
+   "meatRaised": "",
+   "nappySize": "",
+   "nutIngredients": "",
+   "regulatedProductName": "",
+   "storageType": "",
+   "telephoneHelpline": "",
+   "wineColour": "",
+   "wineType": "",
+   "variety": "",
+   "sponsored": false
+  },
+  {
+   "ageRequiredInMonths": 216,
+   "amount": "0.33",
+   "brand": {
+    "name": "Ottakringer",
+    "slug": "ottakringer"
+   },
+   "bundleInfo": "",
+   "category": "Bier & Radler",
+   "conversionFactor": 0.5,
+   "depositType": "ONEWAY",
+   "descriptionLong": "",
+   "descriptionShort": "",
+   "inPromotion": false,
+   "images": [
+    "https://images.cdn.europe-west1.gcp.commercetools.com/787b77ab-692c-4e25-91f4-697690dc3c7c/78-101754-1563555633-2mpujNWT.jpg",
+    "https://images.cdn.europe-west1.gcp.commercetools.com/787b77ab-692c-4e25-91f4-697690dc3c7c/78-101754-1738485070-lRMPdiFk.png"
+   ],
+   "name": "Helles",
+   "packageLabel": "Flasche",
+   "packageLabelKey": "fl",
+   "parentCategories": [
+    [
+     {
+      "key": "13024",
+      "name": "Getränke",
+      "slug": "getraenke-13024",
+      "orderHint": "000000030"
+     },
+     {
+      "key": "13026",
+      "name": "Bier & Radler",
+      "slug": "bier-und-radler-13026",
+      "orderHint": "000000020"
+     }
+    ],
+    [
+     {
+      "key": "99000000",
+      "name": "Alle Angebote",
+      "slug": "alle-angebote-99000000",
+      "orderHint": "000000201"
+     },
+     {
+      "key": "99013092",
+      "name": "Angebote ab 22.10.",
+      "slug": "angebote-ab-2210",
+      "orderHint": "000000010"
+     },
+     {
+      "key": "99013092101",
+      "name": "Wochenangebote",
+      "slug": "angebote-ab-2210-wochenangebote",
+      "orderHint": "000000020"
+     }
+    ]
+   ],
+   "price": {
+    "baseUnitLong": "Milliliter",
+    "baseUnitShort": "ml",
+    "basePriceFactor": "500",
+    "regular": {
+     "perStandardizedQuantity": 89,
+     "promotionQuantity": 12.0,
+     "standardizedPromotionQuantity": 12,
+     "promotionText": "ab 12 Flaschen",
+     "promotionType": "FROM",
+     "tags": [
+      "pt-familie",
+      "pt-multi"
+     ],
+     "value": 59
+    },
+    "standard": {
+     "perStandardizedQuantity": 165,
+     "value": 109
+    },
+    "validityEnd": "2026-10-28",
+    "validityStart": "2026-10-22"
+   },
+   "productId": "dd1dc57b-f9b7-410a-8c6b-7b41fb3e49fc",
+   "medical": false,
+   "sku": "78-101754",
+   "slug": "helles-78101754",
+   "upsellSku": "",
+   "published": true,
+   "purchased": false,
+   "volumeLabelKey": "lt",
+   "volumeLabelLong": "Liter",
+   "volumeLabelShort": "liter",
+   "weight": 0.53,
+   "weightArticle": false,
+   "weightPieceArticle": false,
+   "weightPerPiece": 0,
+   "alcoholByVolume": "",
+   "brandMarketing": "",
+   "countryOfOrigin": "Österreich",
+   "features": "",
+   "keywordSearch": "",
+   "meatBorn": "",
+   "meatButchered": "",
+   "meatSlaughtered": "",
+   "meatRaised": "",
+   "nappySize": "",
+   "nutIngredients": "",
+   "regulatedProductName": "",
+   "storageType": "",
+   "telephoneHelpline": "",
+   "wineColour": "",
+   "wineType": "",
+   "variety": "",
+   "sponsored": false
+  },
+  {
+   "amount": "1",
+   "bundleInfo": "",
+   "category": "Obst",
+   "conversionFactor": 1.0,
+   "descriptionLong": "",
+   "descriptionShort": "Kl. I",
+   "inPromotion": false,
+   "images": [
+    "https://images.cdn.europe-west1.gcp.commercetools.com/787b77ab-692c-4e25-91f4-697690dc3c7c/78-103731-0200150875-zfgKaauc.jpg"
+   ],
+   "name": "Kaki",
+   "packageLabel": "Stück",
+   "packageLabelKey": "st",
+   "parentCategories": [
+    [
+     {
+      "key": "13013",
+      "name": "Obst & Gemüse",
+      "slug": "obst-und-gemuese-13013",
+      "orderHint": "000000010"
+     },
+     {
+      "key": "13014",
+      "name": "Obst",
+      "slug": "obst-13014",
+      "orderHint": "000000010"
+     }
+    ],
+    [
+     {
+      "key": "99000000",
+      "name": "Alle Angebote",
+      "slug": "alle-angebote-99000000",
+      "orderHint": "000000201"
+     },
+     {
+      "key": "99013133",
+      "name": "Angebote ab 29.10.",
+      "slug": "angebote-ab-2910",
+      "orderHint": "000000010"
+     },
+     {
+      "key": "99013133061",
+      "name": "bis zu -50% Wochenend-Kick",
+      "slug": "angebote-ab-2910-bis-zu-50-wochenendkick",
+      "orderHint": "000000020"
+     }
+    ]
+   ],
+   "price": {
+    "baseUnitLong": "Stück",
+    "baseUnitShort": "Stk",
+    "basePriceFactor": "1",
+    "regular": {
+     "perStandardizedQuantity": 59,
+     "tags": [
+      "SO"
+     ],
+     "value": 59
+    },
+    "validityEnd": "2026-10-31",
+    "validityStart": "2026-10-29"
+   },
+   "productId": "668432bd-d330-4585-8baa-65be2950d00e",
+   "medical": false,
+   "sku": "78-103731",
+   "slug": "kaki-78103731",
+   "upsellSku": "",
+   "published": true,
+   "purchased": false,
+   "volumeLabelKey": "st",
+   "volumeLabelLong": "Stück",
+   "volumeLabelShort": "stk",
+   "weight": 0.14,
+   "weightArticle": false,
+   "weightPieceArticle": false,
+   "weightPerPiece": 0,
+   "alcoholByVolume": "",
+   "brandMarketing": "",
+   "countryOfOrigin": "Spanien",
+   "features": "",
+   "keywordSearch": "",
+   "meatBorn": "",
+   "meatButchered": "",
+   "meatSlaughtered": "",
+   "meatRaised": "",
+   "nappySize": "",
+   "nutIngredients": "",
+   "regulatedProductName": "",
+   "storageType": "",
+   "telephoneHelpline": "",
+   "wineColour": "",
+   "wineType": "",
+   "variety": "",
+   "sponsored": false
+  }
+ ]
+}

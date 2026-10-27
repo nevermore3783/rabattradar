@@ -1,0 +1,1625 @@
+{
+ "numFound": 4,
+ "items": [
+  {
+   "resultClass": "product",
+   "type": "product",
+   "code": "11001671",
+   "label": "",
+   "url": "",
+   "gridbox": {
+    "country": "AT",
+    "sequence": 1792970689786768,
+    "data": {
+     "ageRestriction": false,
+     "hasColors": false,
+     "awards": [],
+     "brand": {
+      "name": "MILBONA",
+      "url": "/q/search?q=milbona",
+      "id": "MILA",
+      "showBrand": true
+     },
+     "canonicalPath": "/p/milbona-emmentaler-stueck/p11001671",
+     "canonicalUrl": "/p/milbona-emmentaler-stueck/p11001671",
+     "category": "Food",
+     "cutoutimageV2": [],
+     "dealOfDay": {
+      "active": false
+     },
+     "designTheme": "default",
+     "disclaimers": [
+      {
+       "id": "code_11001671_76ce5f26",
+       "type": "CODE",
+       "value": "Basic"
+      },
+      {
+       "id": "code_11001671_05cdf024",
+       "type": "CODE",
+       "value": "Price"
+      }
+     ],
+     "displayFreeDelivery": false,
+     "energyLabels": [],
+     "erpNumber": "11001671",
+     "flashSales": false,
+     "fullTitle": "MILBONA Emmentaler Stück",
+     "gs1Attributes": [],
+     "guaranteeLabels": [],
+     "havingPrice": true,
+     "havingThreesixty": false,
+     "havingVideos": false,
+     "highlightedSeals": 0,
+     "ians": [
+      "125658"
+     ],
+     "image": "https://www.lidl.at/assets/gcp563da9e34c0143d0b4b08b05c83aced7.png",
+     "image_V1": {
+      "image": "https://www.lidl.at/assets/gcp563da9e34c0143d0b4b08b05c83aced7.png",
+      "accessibility": "Verpackung von Milbona Emmentaler"
+     },
+     "isLidlGiftCard": false,
+     "isUsedProduct": false,
+     "itemId": 11001671,
+     "imageList": [
+      "https://www.lidl.at/assets/gcp563da9e34c0143d0b4b08b05c83aced7.png"
+     ],
+     "imageList_V1": [
+      {
+       "image": "https://www.lidl.at/assets/gcp563da9e34c0143d0b4b08b05c83aced7.png",
+       "accessibility": "Verpackung von Milbona Emmentaler"
+      }
+     ],
+     "imageList_V2": [
+      {
+       "variants": [
+        {
+         "ratio": "4:3",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcpeb02d16e34194d41a151b14e7f96a2fe.png",
+          "smallUrl": "https://www.lidl.at/assets/gcp563da9e34c0143d0b4b08b05c83aced7.png"
+         }
+        },
+        {
+         "ratio": "3:4",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcpee32e7d903344052883f03bff20442f3.png",
+          "smallUrl": "https://www.lidl.at/assets/gcp19cc7f694e8e46dca8e7b1cf7175b066.png"
+         }
+        }
+       ]
+      }
+     ],
+     "keyfacts": {
+      "analyticsCategory": "Food",
+      "description": "<ul><li>Nussig milder Geschmack</li><li>Im Kühlregal</li></ul>",
+      "fullTitle": "MILBONA Emmentaler Stück",
+      "moreDetails": "Weitere Produktdetails",
+      "title": "Emmentaler Stück",
+      "wonCategoryPrimary": "Bedürfniswelten/Food und Near Food/Käse, Milchprodukte & Eier/Käse",
+      "wonCategoryPrimaryPath": "0/17/1739/173912"
+     },
+     "lidlPlus": [],
+     "multipack": false,
+     "nat": "0214483",
+     "online": false,
+     "preventSelling": false,
+     "price": {
+      "basePrice": {
+       "prefix": false,
+       "text": "1 kg = 6.98"
+      },
+      "currencyCode": "EUR",
+      "currencyCodeSecond": "",
+      "currencySymbol": "€",
+      "currencySymbolSecond": "",
+      "discount": {
+       "absoluteDiscount": 0.7,
+       "deletedPrice": 3.49,
+       "discountHasStar": false,
+       "fromRecommendedPrice": false,
+       "hideBargainHint": false,
+       "bargainHintEnabled": false,
+       "bargainHintText": "Mega Schnäppchen",
+       "percentageDiscount": 20,
+       "showDiscount": true,
+       "showFrom": false,
+       "showPercentage": true,
+       "showUpTo": false
+      },
+      "displayedCurrency": "€",
+      "hasStar": true,
+      "hasVat": false,
+      "oldPrice": 3.49,
+      "packaging": {
+       "text": "Je 400 g"
+      },
+      "price": 2.79,
+      "priceTheme": "white_red",
+      "specialTaxes": [],
+      "superscript": "*",
+      "variantsHaveDifferentPrices": false
+     },
+     "productId": 11001671,
+     "productType": "RETAIL",
+     "productOrigin": "progress_event",
+     "quickAddToCart": false,
+     "regions": [
+      1,
+      2,
+      3
+     ],
+     "regionsV2": {
+      "1": {
+       "regionName": "Großebersdorf",
+       "isDefault": true,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      },
+      "2": {
+       "regionName": "Laakirchen",
+       "isDefault": false,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      },
+      "3": {
+       "regionName": "Wundschuh",
+       "isDefault": false,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      }
+     },
+     "regionsPrices": {
+      "1": {
+       "currentPrice": {
+        "basePrice": {
+         "prefix": false,
+         "text": "1 kg = 6.98"
+        },
+        "currencyCode": "EUR",
+        "currencyCodeSecond": "",
+        "currencySymbol": "€",
+        "currencySymbolSecond": "",
+        "discount": {
+         "absoluteDiscount": 0.7,
+         "deletedPrice": 3.49,
+         "discountHasStar": false,
+         "discountText": "-20%",
+         "fromNormalPriceForLidlPlus": false,
+         "fromRecommendedPrice": false,
+         "hideBargainHint": false,
+         "bargainHintEnabled": false,
+         "bargainHintText": "Mega Schnäppchen",
+         "percentageDiscount": 20,
+         "showDiscount": true,
+         "showFrom": false,
+         "showPercentage": true,
+         "showUpTo": false
+        },
+        "displayedCurrency": "€",
+        "endDate": "2026-11-04T22:59:59Z",
+        "endDateExclusive": "2026-11-04T23:00Z",
+        "hasStar": false,
+        "hasVat": true,
+        "oldPrice": 3.49,
+        "packaging": {
+         "text": "Je 400 g"
+        },
+        "price": 2.79,
+        "priceTheme": "white_red",
+        "specialTaxes": [],
+        "startDate": "2026-10-25T23:24:33.165Z",
+        "superscript": "*",
+        "variantsHaveDifferentPrices": false,
+        "priceLegendName": "*"
+       },
+       "futureLidlPlusPrices": []
+      }
+     },
+     "ribbons": [],
+     "renderedTs": 1792970689,
+     "seals": [
+      {
+       "altText": "Blaues rundes Siegel mit einem Thermometer, das die Temperatur anzeigt.",
+       "image": "https://www.lidl.at/assets/gcp920d4f49d5e54a53972553551a5bc6da.png"
+      }
+     ],
+     "stockAvailability": {
+      "availabilityIndicator": 0,
+      "badgeInfo": {
+       "badges": [
+        {
+         "text": "in der Filiale von 02.11. - 04.11.",
+         "type": "IN_STORE_FROM_FUTURE_DATE_RANGE"
+        }
+       ]
+      },
+      "badgeInfoV2": [
+       {
+        "badges": [
+         {
+          "text": "in der Filiale von 02.11. - 04.11.",
+          "type": "IN_STORE_FROM_FUTURE_DATE_RANGE"
+         }
+        ],
+        "validFrom": 1793574000,
+        "validUntil": 1793833199
+       }
+      ],
+      "onlineAvailable": false,
+      "minOrderableQuantity": 1,
+      "backInStockNotification": false,
+      "backInStockNotificationSoldOut": false
+     },
+     "store": false,
+     "storeStartDate": 1793574000,
+     "storeEndDate": 1793833199,
+     "title": "Emmentaler Stück",
+     "timezoneId": "Europe/Vienna",
+     "zones": {}
+    },
+    "productId": 11001671,
+    "meta": {
+     "categoryPaths": [],
+     "campaignPaths": [
+      [
+       {
+        "hiddenCategory": false,
+        "id": "10106137",
+        "name": "Aktion",
+        "url": "/c/aktion/a10106137"
+       }
+      ]
+     ],
+     "fullTitle": "MILBONA Emmentaler Stück",
+     "ean": "20786304",
+     "retailLists": [
+      [
+       {
+        "id": 46666
+       }
+      ]
+     ],
+     "lists": [
+      46666
+     ],
+     "wonCategoryBreadcrumbs": [
+      [
+       {
+        "hiddenCategory": false,
+        "id": "10068374",
+        "name": "Essen & Trinken",
+        "url": "/c/essen-trinken/s10068374"
+       },
+       {
+        "hiddenCategory": false,
+        "id": "10095761",
+        "name": "Käse, Milchprodukte & Eier",
+        "url": "/h/kaese-milchprodukte-eier/h10095761"
+       },
+       {
+        "hiddenCategory": false,
+        "id": "10096077",
+        "name": "Käse",
+        "url": "/h/kaese/h10096077"
+       }
+      ]
+     ],
+     "worldOfNeeds": [
+      {
+       "code": "173912",
+       "isMain": true,
+       "name": "Käse",
+       "parent": "1739",
+       "superCategories": [
+        {
+         "code": "1739",
+         "name": "Käse, Milchprodukte & Eier",
+         "parent": "17"
+        },
+        {
+         "code": "17",
+         "name": "Food und Near Food",
+         "parent": "0"
+        },
+        {
+         "code": "0",
+         "name": "Bedürfniswelten",
+         "parent": ""
+        }
+       ]
+      }
+     ],
+     "preview": false
+    },
+    "action": "UPDATE",
+    "language": "de",
+    "eventType": "GRIDBOX",
+    "id": "11001671"
+   },
+   "tracking": {
+    "position": 6,
+    "xPayload": {
+     "searchTrackingMasterId": "Product.11001671",
+     "searchTrackingTitle": "Emmentaler+St%C3%BCck",
+     "searchTrackingPageSize": 60,
+     "searchTrackingPage": 1,
+     "searchTrackingEvent": "click",
+     "list": "search",
+     "searchTrackingId": "Product.11001671",
+     "searchTrackingOrigPos": 1,
+     "searchTrackingPos": 6,
+     "searchTrackingOrigPageSize": 60,
+     "searchTrackingChannel": "AT",
+     "category": "Food"
+    }
+   }
+  },
+  {
+   "resultClass": "product",
+   "type": "product",
+   "code": "11007282",
+   "label": "",
+   "url": "",
+   "gridbox": {
+    "country": "AT",
+    "sequence": 1793098625827118,
+    "data": {
+     "ageRestriction": false,
+     "hasColors": false,
+     "awards": [],
+     "brand": {
+      "name": "PHILADELPHIA",
+      "url": "/q/search?q=philadelphia",
+      "id": "PHDA",
+      "showBrand": true
+     },
+     "canonicalPath": "/p/philadelphia-frischkaese/p11007282",
+     "canonicalUrl": "/p/philadelphia-frischkaese/p11007282",
+     "category": "Food",
+     "cutoutimageV2": [],
+     "dealOfDay": {
+      "active": false
+     },
+     "designTheme": "default",
+     "disclaimers": [
+      {
+       "id": "code_11007282_8bcb0e8b",
+       "type": "CODE",
+       "value": "Basic"
+      },
+      {
+       "id": "code_11007282_7d036813",
+       "type": "CODE",
+       "value": "Price"
+      }
+     ],
+     "displayFreeDelivery": false,
+     "energyLabels": [],
+     "erpNumber": "11007282",
+     "flashSales": false,
+     "fullTitle": "PHILADELPHIA Frischkäse",
+     "gs1Attributes": [],
+     "guaranteeLabels": [],
+     "havingPrice": true,
+     "havingThreesixty": false,
+     "havingVideos": false,
+     "highlightedSeals": 0,
+     "ians": [
+      "206237"
+     ],
+     "image": "https://www.lidl.at/assets/gcp1cfb1a61982941f49296eae10951df84.png",
+     "image_V1": {
+      "image": "https://www.lidl.at/assets/gcp1cfb1a61982941f49296eae10951df84.png",
+      "accessibility": "Philadelphia Frischkäse Original und Schnittlauch."
+     },
+     "isLidlGiftCard": false,
+     "isUsedProduct": false,
+     "itemId": 11007282,
+     "imageList": [
+      "https://www.lidl.at/assets/gcp1cfb1a61982941f49296eae10951df84.png",
+      "https://www.lidl.at/assets/gcp7a7fbfeb198a4f6fb0fb7437f336bfff.png",
+      "https://www.lidl.at/assets/gcpfa6c7c495d9c4b1f81da268c51a1d21f.png"
+     ],
+     "imageList_V1": [
+      {
+       "image": "https://www.lidl.at/assets/gcp1cfb1a61982941f49296eae10951df84.png",
+       "accessibility": "Philadelphia Frischkäse Original und Schnittlauch."
+      },
+      {
+       "image": "https://www.lidl.at/assets/gcp7a7fbfeb198a4f6fb0fb7437f336bfff.png",
+       "accessibility": "Philadelphia Frischkäse mit Knoblauch und Kräutern"
+      },
+      {
+       "image": "https://www.lidl.at/assets/gcpfa6c7c495d9c4b1f81da268c51a1d21f.png",
+       "accessibility": "Philadelphia Light Frischkäse in der Verpackung, mit der griechischen Aufschrift 'ΠΛΟΥΣΙΑ ΓΕΥΣΗ, 30% ΛΙΓΟΤΕΡΑ ΛΙΠΑΡΑ'"
+      }
+     ],
+     "imageList_V2": [
+      {
+       "variants": [
+        {
+         "ratio": "3:4",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcp0a94b08282bd4bb8b705ae4bfa3de547.png",
+          "smallUrl": "https://www.lidl.at/assets/gcp2413224dad2741dbb71de2745b39e4d6.png"
+         }
+        },
+        {
+         "ratio": "4:3",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcp1f3e7b9893a94475a1f73b7946498f0f.png",
+          "smallUrl": "https://www.lidl.at/assets/gcp1cfb1a61982941f49296eae10951df84.png"
+         }
+        }
+       ]
+      },
+      {
+       "variants": [
+        {
+         "ratio": "3:4",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcp0e094d113f3448308fdd4b8d9bd4e7ce.png",
+          "smallUrl": "https://www.lidl.at/assets/gcpd875eeda7a4e454cb0015ea270ae276b.png"
+         }
+        },
+        {
+         "ratio": "4:3",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcp902d1f8a8adb4378bd4aea10c850a17e.png",
+          "smallUrl": "https://www.lidl.at/assets/gcp7a7fbfeb198a4f6fb0fb7437f336bfff.png"
+         }
+        }
+       ]
+      },
+      {
+       "variants": [
+        {
+         "ratio": "3:4",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcpd3ffc858e081438bab2eac046e965c8a.png",
+          "smallUrl": "https://www.lidl.at/assets/gcpd46e9787227b4ca3920e4293963a2c56.png"
+         }
+        },
+        {
+         "ratio": "4:3",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcp411dc25fe48e4b3e8f0cdf2e578023f7.png",
+          "smallUrl": "https://www.lidl.at/assets/gcpfa6c7c495d9c4b1f81da268c51a1d21f.png"
+         }
+        }
+       ]
+      }
+     ],
+     "keyfacts": {
+      "analyticsCategory": "Food",
+      "description": "<ul><li>Verschiedene Sorten</li><li>Im Kühlregal</li></ul>",
+      "fullTitle": "PHILADELPHIA Frischkäse",
+      "moreDetails": "Weitere Produktdetails",
+      "title": "Frischkäse",
+      "wonCategoryPrimary": "Bedürfniswelten/Food und Near Food/Käse, Milchprodukte & Eier/Käse",
+      "wonCategoryPrimaryPath": "0/17/1739/173912"
+     },
+     "lidlPlus": [
+      {
+       "price": {
+        "basePrice": {
+         "prefix": false,
+         "text": "1 kg = 7.09"
+        },
+        "discount": {
+         "discountHasStar": false,
+         "fromNormalPriceForLidlPlus": false,
+         "fromRecommendedPrice": false,
+         "showDiscount": false,
+         "showFrom": false,
+         "showPercentage": false,
+         "showUpTo": false
+        },
+        "displayedCurrency": "€",
+        "hasStar": false,
+        "hasVat": false,
+        "packaging": {
+         "text": "Je 175 g"
+        },
+        "price": 1.24,
+        "priceTheme": "red_yellow",
+        "specialTaxes": [],
+        "superscript": "*"
+       },
+       "lidlPlusText": "Mit Lidl Plus",
+       "highlightText": "-34%"
+      }
+     ],
+     "multipack": false,
+     "online": false,
+     "preventSelling": false,
+     "price": {
+      "basePrice": {
+       "prefix": false,
+       "text": "1 kg = 9.66"
+      },
+      "currencyCode": "EUR",
+      "currencyCodeSecond": "",
+      "currencySymbol": "€",
+      "currencySymbolSecond": "",
+      "discount": {
+       "absoluteDiscount": 0.2,
+       "deletedPrice": 1.89,
+       "discountHasStar": false,
+       "fromRecommendedPrice": false,
+       "hideBargainHint": false,
+       "bargainHintEnabled": false,
+       "bargainHintText": "Mega Schnäppchen",
+       "percentageDiscount": 10,
+       "showDiscount": true,
+       "showFrom": false,
+       "showPercentage": true,
+       "showUpTo": false
+      },
+      "displayedCurrency": "€",
+      "hasStar": true,
+      "hasVat": false,
+      "oldPrice": 1.89,
+      "packaging": {
+       "text": "Je 175 g"
+      },
+      "price": 1.69,
+      "priceTheme": "white_red",
+      "specialTaxes": [],
+      "superscript": "*",
+      "variantsHaveDifferentPrices": false
+     },
+     "productId": 11007282,
+     "productType": "RETAIL_HEAD",
+     "productOrigin": "progress_event",
+     "quickAddToCart": false,
+     "regions": [
+      1,
+      2,
+      3
+     ],
+     "regionsV2": {
+      "1": {
+       "regionName": "Großebersdorf",
+       "isDefault": true,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      },
+      "2": {
+       "regionName": "Laakirchen",
+       "isDefault": false,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      },
+      "3": {
+       "regionName": "Wundschuh",
+       "isDefault": false,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      }
+     },
+     "regionsPrices": {
+      "1": {
+       "currentPrice": {
+        "basePrice": {
+         "prefix": false,
+         "text": "1 kg = 9.66"
+        },
+        "currencyCode": "EUR",
+        "currencyCodeSecond": "",
+        "currencySymbol": "€",
+        "currencySymbolSecond": "",
+        "discount": {
+         "absoluteDiscount": 0.2,
+         "deletedPrice": 1.89,
+         "discountHasStar": false,
+         "discountText": "-10%",
+         "fromNormalPriceForLidlPlus": false,
+         "fromRecommendedPrice": false,
+         "hideBargainHint": false,
+         "bargainHintEnabled": false,
+         "bargainHintText": "Mega Schnäppchen",
+         "percentageDiscount": 10,
+         "showDiscount": true,
+         "showFrom": false,
+         "showPercentage": true,
+         "showUpTo": false
+        },
+        "displayedCurrency": "€",
+        "endDate": "2026-10-28T22:59:59Z",
+        "endDateExclusive": "2026-10-28T23:00Z",
+        "hasStar": false,
+        "hasVat": true,
+        "oldPrice": 1.89,
+        "packaging": {
+         "text": "Je 175 g"
+        },
+        "price": 1.69,
+        "priceTheme": "white_red",
+        "specialTaxes": [],
+        "startDate": "2026-10-15T14:39:53.300Z",
+        "superscript": "*",
+        "variantsHaveDifferentPrices": false,
+        "priceLegendName": "*"
+       },
+       "currentLidlPlusPrice": {
+        "price": {
+         "basePrice": {
+          "prefix": false,
+          "text": "1 kg = 7.09"
+         },
+         "currencyCode": "EUR",
+         "currencyCodeSecond": "",
+         "currencySymbol": "€",
+         "currencySymbolSecond": "",
+         "discount": {
+          "deletedPrice": 1.89,
+          "discountHasStar": false,
+          "discountText": "-34%",
+          "fromNormalPriceForLidlPlus": false,
+          "fromRecommendedPrice": false,
+          "hideBargainHint": false,
+          "bargainHintEnabled": false,
+          "bargainHintText": "Mega Schnäppchen",
+          "showDiscount": true,
+          "showFrom": false,
+          "showPercentage": true,
+          "showUpTo": false
+         },
+         "displayedCurrency": "€",
+         "endDate": "2026-10-28T22:59:59Z",
+         "endDateExclusive": "2026-10-28T23:00Z",
+         "hasStar": false,
+         "hasVat": true,
+         "oldPrice": 1.89,
+         "packaging": {
+          "text": "Je 175 g"
+         },
+         "price": 1.24,
+         "priceTheme": "white_red",
+         "specialTaxes": [],
+         "startDate": "2026-10-15T14:39:53.597Z",
+         "superscript": "*",
+         "variantsHaveDifferentPrices": false,
+         "priceLegendName": "*"
+        },
+        "lidlPlusText": "Mit Lidl Plus",
+        "highlightText": "-34%",
+        "priceLegendName": "*"
+       },
+       "futureLidlPlusPrices": []
+      }
+     },
+     "ribbons": [],
+     "renderedTs": 1793098625,
+     "seals": [
+      {
+       "altText": "Blaues rundes Siegel mit einem Thermometer, das die Temperatur anzeigt.",
+       "image": "https://www.lidl.at/assets/gcp920d4f49d5e54a53972553551a5bc6da.png"
+      }
+     ],
+     "stockAvailability": {
+      "availabilityIndicator": 0,
+      "badgeInfo": {
+       "badges": [
+        {
+         "text": "in der Filiale 27.10. - 28.10.",
+         "type": "IN_STORE_TODAY_DATE_RANGE"
+        }
+       ]
+      },
+      "badgeInfoV2": [
+       {
+        "badges": [
+         {
+          "text": "in der Filiale 27.10. - 28.10.",
+          "type": "IN_STORE_TODAY_DATE_RANGE"
+         }
+        ],
+        "validFrom": 1793055600,
+        "validUntil": 1793228399
+       }
+      ],
+      "onlineAvailable": false,
+      "minOrderableQuantity": 0,
+      "backInStockNotification": false,
+      "backInStockNotificationSoldOut": false
+     },
+     "store": true,
+     "storeStartDate": 1793055600,
+     "storeEndDate": 1793228399,
+     "title": "Frischkäse",
+     "timezoneId": "Europe/Vienna",
+     "zones": {}
+    },
+    "productId": 11007282,
+    "meta": {
+     "categoryPaths": [],
+     "campaignPaths": [
+      [
+       {
+        "hiddenCategory": false,
+        "id": "10105596",
+        "name": "Aktion",
+        "url": "/c/aktion/a10105596"
+       }
+      ],
+      [
+       {
+        "hiddenCategory": false,
+        "id": "10105597",
+        "name": "Jetzt noch mehr sparen mit Lidl Plus",
+        "url": "/c/jetzt-noch-mehr-sparen-mit-lidl-plus/a10105597"
+       }
+      ]
+     ],
+     "fullTitle": "PHILADELPHIA Frischkäse",
+     "ean": "7622300315719",
+     "retailLists": [
+      [
+       {
+        "id": 43671
+       }
+      ]
+     ],
+     "lists": [
+      43671
+     ],
+     "wonCategoryBreadcrumbs": [
+      [
+       {
+        "hiddenCategory": false,
+        "id": "10068374",
+        "name": "Essen & Trinken",
+        "url": "/c/essen-trinken/s10068374"
+       },
+       {
+        "hiddenCategory": false,
+        "id": "10095761",
+        "name": "Käse, Milchprodukte & Eier",
+        "url": "/h/kaese-milchprodukte-eier/h10095761"
+       },
+       {
+        "hiddenCategory": false,
+        "id": "10096077",
+        "name": "Käse",
+        "url": "/h/kaese/h10096077"
+       }
+      ]
+     ],
+     "worldOfNeeds": [
+      {
+       "code": "173912",
+       "isMain": true,
+       "name": "Käse",
+       "parent": "1739",
+       "superCategories": [
+        {
+         "code": "1739",
+         "name": "Käse, Milchprodukte & Eier",
+         "parent": "17"
+        },
+        {
+         "code": "17",
+         "name": "Food und Near Food",
+         "parent": "0"
+        },
+        {
+         "code": "0",
+         "name": "Bedürfniswelten",
+         "parent": ""
+        }
+       ]
+      }
+     ],
+     "preview": false
+    },
+    "action": "UPDATE",
+    "language": "de",
+    "eventType": "GRIDBOX",
+    "id": "11007282"
+   },
+   "tracking": {
+    "position": 26,
+    "xPayload": {
+     "searchTrackingMasterId": "Product.11007282",
+     "searchTrackingTitle": "Frischk%C3%A4se",
+     "searchTrackingPageSize": 60,
+     "searchTrackingPage": 1,
+     "searchTrackingEvent": "click",
+     "list": "search",
+     "searchTrackingId": "Product.11007282",
+     "searchTrackingOrigPos": 1,
+     "searchTrackingPos": 26,
+     "searchTrackingOrigPageSize": 60,
+     "searchTrackingChannel": "AT",
+     "category": "Food"
+    }
+   }
+  },
+  {
+   "resultClass": "product",
+   "type": "product",
+   "code": "11007308",
+   "label": "",
+   "url": "",
+   "gridbox": {
+    "country": "AT",
+    "sequence": 1792879901740724,
+    "data": {
+     "ageRestriction": false,
+     "hasColors": false,
+     "awards": [],
+     "canonicalPath": "/p/monte-maxi/p11007308",
+     "canonicalUrl": "/p/monte-maxi/p11007308",
+     "category": "Food",
+     "cutoutimageV2": [],
+     "dealOfDay": {
+      "active": false
+     },
+     "designTheme": "default",
+     "disclaimers": [
+      {
+       "id": "code_11007308_446b8fc9",
+       "type": "CODE",
+       "value": "Basic"
+      },
+      {
+       "id": "code_11007308_0f5a1c07",
+       "type": "CODE",
+       "value": "Price"
+      }
+     ],
+     "displayFreeDelivery": false,
+     "energyLabels": [],
+     "erpNumber": "11007308",
+     "flashSales": false,
+     "fullTitle": "Monte Maxi",
+     "gs1Attributes": [],
+     "guaranteeLabels": [],
+     "havingPrice": true,
+     "havingThreesixty": false,
+     "havingVideos": false,
+     "highlightedSeals": 0,
+     "ians": [
+      "206730"
+     ],
+     "image": "https://www.lidl.at/assets/gcp036fbd3dc66f45879061d380e8f13198.png",
+     "image_V1": {
+      "image": "https://www.lidl.at/assets/gcp036fbd3dc66f45879061d380e8f13198.png",
+      "accessibility": "Zott Monte 4x Maxi Milchcreme & Schoko-Nuss"
+     },
+     "isLidlGiftCard": false,
+     "isUsedProduct": false,
+     "itemId": 11007308,
+     "imageList": [
+      "https://www.lidl.at/assets/gcp036fbd3dc66f45879061d380e8f13198.png"
+     ],
+     "imageList_V1": [
+      {
+       "image": "https://www.lidl.at/assets/gcp036fbd3dc66f45879061d380e8f13198.png",
+       "accessibility": "Zott Monte 4x Maxi Milchcreme & Schoko-Nuss"
+      }
+     ],
+     "imageList_V2": [
+      {
+       "variants": [
+        {
+         "ratio": "3:4",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcpa3a4f830937e469482d89403b2180d47.png",
+          "smallUrl": "https://www.lidl.at/assets/gcp99584b869a5c4592a542a67fca8f6066.png"
+         }
+        },
+        {
+         "ratio": "4:3",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcp1153838cf4ca46e391658ed2f21553b2.png",
+          "smallUrl": "https://www.lidl.at/assets/gcp036fbd3dc66f45879061d380e8f13198.png"
+         }
+        }
+       ]
+      }
+     ],
+     "keyfacts": {
+      "analyticsCategory": "Food",
+      "description": "<ul><li>Verschiedene Sorten</li><li>Im Kühlregal</li></ul>",
+      "fullTitle": "Monte Maxi",
+      "moreDetails": "Weitere Produktdetails",
+      "title": "Monte Maxi",
+      "wonCategoryPrimary": "Bedürfniswelten/Food und Near Food/Käse, Milchprodukte & Eier/Desserts",
+      "wonCategoryPrimaryPath": "0/17/1739/173915"
+     },
+     "lidlPlus": [],
+     "multipack": false,
+     "online": false,
+     "preventSelling": false,
+     "price": {
+      "basePrice": {
+       "prefix": false,
+       "text": "1 kg = 5.79 | Einzeln = 2.79"
+      },
+      "currencyCode": "EUR",
+      "currencyCodeSecond": "",
+      "currencySymbol": "€",
+      "currencySymbolSecond": "",
+      "discount": {
+       "absoluteDiscount": 1.4,
+       "deletedPrice": 2.79,
+       "discountHasStar": false,
+       "fromRecommendedPrice": false,
+       "hideBargainHint": false,
+       "bargainHintEnabled": false,
+       "bargainHintText": "Mega Schnäppchen",
+       "percentageDiscount": 50,
+       "showDiscount": true,
+       "showFrom": false,
+       "showPercentage": true,
+       "showUpTo": false
+      },
+      "displayedCurrency": "€",
+      "hasStar": true,
+      "hasVat": false,
+      "oldPrice": 2.79,
+      "packaging": {
+       "text": "Bei 2 Stk. je 4x 100 g"
+      },
+      "price": 1.39,
+      "priceTheme": "white_red",
+      "specialTaxes": [],
+      "superscript": "*",
+      "variantsHaveDifferentPrices": false
+     },
+     "productId": 11007308,
+     "productType": "RETAIL_HEAD",
+     "productOrigin": "progress_event",
+     "quickAddToCart": false,
+     "regions": [
+      1,
+      2,
+      3
+     ],
+     "regionsV2": {
+      "1": {
+       "regionName": "Großebersdorf",
+       "isDefault": true,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      },
+      "2": {
+       "regionName": "Laakirchen",
+       "isDefault": false,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      },
+      "3": {
+       "regionName": "Wundschuh",
+       "isDefault": false,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      }
+     },
+     "regionsPrices": {
+      "1": {
+       "currentPrice": {
+        "basePrice": {
+         "prefix": false,
+         "text": "1 kg = 5.79 | Einzeln = 2.79"
+        },
+        "currencyCode": "EUR",
+        "currencyCodeSecond": "",
+        "currencySymbol": "€",
+        "currencySymbolSecond": "",
+        "discount": {
+         "absoluteDiscount": 1.4,
+         "deletedPrice": 2.79,
+         "discountHasStar": false,
+         "discountText": "1+1 gratis",
+         "fromNormalPriceForLidlPlus": false,
+         "fromRecommendedPrice": false,
+         "hideBargainHint": false,
+         "bargainHintEnabled": false,
+         "bargainHintText": "Mega Schnäppchen",
+         "percentageDiscount": 50,
+         "showDiscount": true,
+         "showFrom": false,
+         "showPercentage": true,
+         "showUpTo": false
+        },
+        "displayedCurrency": "€",
+        "endDate": "2026-11-04T22:59:59Z",
+        "endDateExclusive": "2026-11-04T23:00Z",
+        "hasStar": false,
+        "hasVat": true,
+        "oldPrice": 2.79,
+        "packaging": {
+         "text": "Bei 2 Stk. je 4x 100 g"
+        },
+        "price": 1.39,
+        "priceTheme": "white_red",
+        "specialTaxes": [],
+        "startDate": "2026-10-22T13:02:12.408Z",
+        "superscript": "*",
+        "variantsHaveDifferentPrices": false,
+        "priceLegendName": "*"
+       },
+       "futureLidlPlusPrices": []
+      }
+     },
+     "ribbons": [],
+     "renderedTs": 1792879901,
+     "seals": [
+      {
+       "altText": "Blaues rundes Siegel mit einem Thermometer, das die Temperatur anzeigt.",
+       "image": "https://www.lidl.at/assets/gcp920d4f49d5e54a53972553551a5bc6da.png"
+      }
+     ],
+     "stockAvailability": {
+      "availabilityIndicator": 0,
+      "badgeInfo": {
+       "badges": [
+        {
+         "text": "in der Filiale von 02.11. - 04.11.",
+         "type": "IN_STORE_FROM_FUTURE_DATE_RANGE"
+        }
+       ]
+      },
+      "badgeInfoV2": [
+       {
+        "badges": [
+         {
+          "text": "in der Filiale von 02.11. - 04.11.",
+          "type": "IN_STORE_FROM_FUTURE_DATE_RANGE"
+         }
+        ],
+        "validFrom": 1793574000,
+        "validUntil": 1793833199
+       }
+      ],
+      "onlineAvailable": false,
+      "minOrderableQuantity": 0,
+      "backInStockNotification": false,
+      "backInStockNotificationSoldOut": false
+     },
+     "store": false,
+     "storeStartDate": 1793574000,
+     "storeEndDate": 1793833199,
+     "title": "Monte Maxi",
+     "timezoneId": "Europe/Vienna",
+     "zones": {}
+    },
+    "productId": 11007308,
+    "meta": {
+     "categoryPaths": [],
+     "campaignPaths": [
+      [
+       {
+        "hiddenCategory": false,
+        "id": "10106135",
+        "name": "Gratis Aktion",
+        "url": "/c/gratis-aktion/a10106135"
+       }
+      ]
+     ],
+     "fullTitle": "Monte Maxi",
+     "ean": "4014500036830",
+     "retailLists": [
+      [
+       {
+        "id": 46666
+       }
+      ]
+     ],
+     "lists": [
+      46666
+     ],
+     "wonCategoryBreadcrumbs": [
+      [
+       {
+        "hiddenCategory": false,
+        "id": "10068374",
+        "name": "Essen & Trinken",
+        "url": "/c/essen-trinken/s10068374"
+       },
+       {
+        "hiddenCategory": false,
+        "id": "10095761",
+        "name": "Käse, Milchprodukte & Eier",
+        "url": "/h/kaese-milchprodukte-eier/h10095761"
+       },
+       {
+        "hiddenCategory": false,
+        "id": "10096080",
+        "name": "Desserts",
+        "url": "/h/nachspeisen/h10096080"
+       }
+      ]
+     ],
+     "worldOfNeeds": [
+      {
+       "code": "173915",
+       "isMain": true,
+       "name": "Desserts",
+       "parent": "1739",
+       "superCategories": [
+        {
+         "code": "1739",
+         "name": "Käse, Milchprodukte & Eier",
+         "parent": "17"
+        },
+        {
+         "code": "17",
+         "name": "Food und Near Food",
+         "parent": "0"
+        },
+        {
+         "code": "0",
+         "name": "Bedürfniswelten",
+         "parent": ""
+        }
+       ]
+      }
+     ],
+     "preview": false
+    },
+    "action": "UPDATE",
+    "language": "de",
+    "eventType": "GRIDBOX",
+    "id": "11007308"
+   },
+   "tracking": {
+    "position": 27,
+    "xPayload": {
+     "searchTrackingMasterId": "Product.11007308",
+     "searchTrackingTitle": "Monte+Maxi",
+     "searchTrackingPageSize": 60,
+     "searchTrackingPage": 1,
+     "searchTrackingEvent": "click",
+     "list": "search",
+     "searchTrackingId": "Product.11007308",
+     "searchTrackingOrigPos": 1,
+     "searchTrackingPos": 27,
+     "searchTrackingOrigPageSize": 60,
+     "searchTrackingChannel": "AT",
+     "category": "Food"
+    }
+   }
+  },
+  {
+   "resultClass": "product",
+   "type": "product",
+   "code": "11120164",
+   "label": "",
+   "url": "",
+   "gridbox": {
+    "country": "AT",
+    "sequence": 1793055859603865,
+    "data": {
+     "ageRestriction": false,
+     "hasColors": false,
+     "awards": [],
+     "brand": {
+      "name": "PARKSIDE",
+      "url": "/q/search?q=parkside",
+      "showBrand": true
+     },
+     "canonicalPath": "/p/parkside-benzin-kettensaege/p11120164",
+     "canonicalUrl": "/p/parkside-benzin-kettensaege/p11120164",
+     "category": "NonFood",
+     "cutoutimageV2": [],
+     "dealOfDay": {
+      "active": false
+     },
+     "designTheme": "default",
+     "disclaimers": [
+      {
+       "id": "code_11120164_0d509dcf",
+       "type": "CODE",
+       "value": "Basic"
+      },
+      {
+       "id": "code_11120164_fefcbf0f",
+       "type": "CODE",
+       "value": "Price"
+      }
+     ],
+     "displayFreeDelivery": false,
+     "energyLabels": [],
+     "erpNumber": "11120164",
+     "flashSales": false,
+     "fullTitle": "PARKSIDE Benzin-Kettensäge",
+     "gs1Attributes": [],
+     "guaranteeLabels": [],
+     "havingPrice": true,
+     "havingThreesixty": false,
+     "havingVideos": false,
+     "highlightedSeals": 1,
+     "ians": [
+      "517228"
+     ],
+     "image": "https://www.lidl.at/assets/gcpf696d7b62ac846c7ae55fad08b03414c.png",
+     "image_V1": {
+      "image": "https://www.lidl.at/assets/gcpf696d7b62ac846c7ae55fad08b03414c.png",
+      "accessibility": "PARKSIDE Benzin-Kettensäge mit Schwert und Kette."
+     },
+     "isLidlGiftCard": false,
+     "isUsedProduct": false,
+     "itemId": 11120164,
+     "imageList": [
+      "https://www.lidl.at/assets/gcpf696d7b62ac846c7ae55fad08b03414c.png",
+      "https://www.lidl.at/assets/gcp90d3badeb3b94f0c99c32000e7f58a0d.png",
+      "https://www.lidl.at/assets/gcpe87d84b33a3342d696e06324803a8616.png"
+     ],
+     "imageList_V1": [
+      {
+       "image": "https://www.lidl.at/assets/gcpf696d7b62ac846c7ae55fad08b03414c.png",
+       "accessibility": "PARKSIDE Benzin-Kettensäge mit Schwert und Kette."
+      },
+      {
+       "image": "https://www.lidl.at/assets/gcp90d3badeb3b94f0c99c32000e7f58a0d.png",
+       "accessibility": "Mann sägt Holz mit einer PARKSIDE Benzin-Kettensäge."
+      },
+      {
+       "image": "https://www.lidl.at/assets/gcpe87d84b33a3342d696e06324803a8616.png",
+       "accessibility": "Kettensäge mit langem Schwert und grünem Gehäuse."
+      }
+     ],
+     "imageList_V2": [
+      {
+       "variants": [
+        {
+         "ratio": "4:3",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcpf02004b7e9cc455cb5f6099653764662.png",
+          "smallUrl": "https://www.lidl.at/assets/gcpf696d7b62ac846c7ae55fad08b03414c.png"
+         }
+        },
+        {
+         "ratio": "3:4",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcp4a08d50713214b2191a0f3382532a947.png",
+          "smallUrl": "https://www.lidl.at/assets/gcpb9d68f2b06d144118f108f4e6ab7be34.png"
+         }
+        }
+       ]
+      },
+      {
+       "variants": [
+        {
+         "ratio": "4:3",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcp00f581e954fb477cbb5b5d6b8dfe076a.png",
+          "smallUrl": "https://www.lidl.at/assets/gcp90d3badeb3b94f0c99c32000e7f58a0d.png"
+         }
+        },
+        {
+         "ratio": "3:4",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcpf1f948d42a404ece911b361390423757.png",
+          "smallUrl": "https://www.lidl.at/assets/gcp447e0a2e2a854ed3ac2eaef6ddce57a6.png"
+         }
+        }
+       ]
+      },
+      {
+       "variants": [
+        {
+         "ratio": "4:3",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcp2f913dfff96d4449bdb5ebb67a26ce1d.png",
+          "smallUrl": "https://www.lidl.at/assets/gcpe87d84b33a3342d696e06324803a8616.png"
+         }
+        },
+        {
+         "ratio": "3:4",
+         "sizes": {
+          "mediumUrl": "https://www.lidl.at/assets/gcpa6bd7fe3323c49c98333618a7c2d502a.png",
+          "smallUrl": "https://www.lidl.at/assets/gcpbb73acd488764b938264a837e3303722.png"
+         }
+        }
+       ]
+      }
+     ],
+     "keyfacts": {
+      "analyticsCategory": "NonFood",
+      "description": "<ul><li>Mit Anti-Vibrationsausrüstung, automatischem Kettenölsystem und Rückschlagbremse</li><li>Leistungsstarker 2-Takt-Benzinmotor mit 2 kW (2,7 PS)</li><li>Schnittlänge: 44 cm</li></ul>",
+      "fullTitle": "PARKSIDE Benzin-Kettensäge",
+      "moreDetails": "Weitere Produktdetails",
+      "title": "Benzin-Kettensäge",
+      "wonCategoryPrimary": "Bedürfniswelten/Baumarkt & Garten/Gartengeräte & Gartenwerkzeuge",
+      "wonCategoryPrimaryPath": "0/12/1212"
+     },
+     "lidlPlus": [
+      {
+       "price": {
+        "basePrice": {
+         "prefix": false
+        },
+        "discount": {
+         "discountHasStar": false,
+         "fromNormalPriceForLidlPlus": false,
+         "fromRecommendedPrice": false,
+         "showDiscount": false,
+         "showFrom": false,
+         "showPercentage": false,
+         "showUpTo": false
+        },
+        "displayedCurrency": "€",
+        "hasStar": false,
+        "hasVat": false,
+        "packaging": {
+         "text": "Je"
+        },
+        "price": 69.99,
+        "priceTheme": "red_yellow",
+        "specialTaxes": [],
+        "superscript": "*"
+       },
+       "lidlPlusText": "Mit Lidl Plus",
+       "highlightText": "10.- billiger"
+      }
+     ],
+     "multipack": false,
+     "nat": "0517228",
+     "online": false,
+     "preventSelling": false,
+     "price": {
+      "currencyCode": "EUR",
+      "currencyCodeSecond": "",
+      "currencySymbol": "€",
+      "currencySymbolSecond": "",
+      "displayedCurrency": "€",
+      "hasStar": true,
+      "hasVat": false,
+      "specialTaxes": [],
+      "variantsHaveDifferentPrices": false
+     },
+     "productId": 11120164,
+     "productType": "RETAIL_HEAD",
+     "productOrigin": "progress_event",
+     "quickAddToCart": false,
+     "regions": [
+      1,
+      2,
+      3
+     ],
+     "regionsV2": {
+      "1": {
+       "regionName": "Großebersdorf",
+       "isDefault": true,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      },
+      "2": {
+       "regionName": "Laakirchen",
+       "isDefault": false,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      },
+      "3": {
+       "regionName": "Wundschuh",
+       "isDefault": false,
+       "regionPriceId": "1",
+       "status": "ONLINE",
+       "hasVat": false,
+       "priceHasZeroVat": false
+      }
+     },
+     "regionsPrices": {
+      "1": {
+       "currentLidlPlusPrice": {
+        "price": {
+         "basePrice": {
+          "prefix": false
+         },
+         "currencyCode": "EUR",
+         "currencyCodeSecond": "",
+         "currencySymbol": "€",
+         "currencySymbolSecond": "",
+         "discount": {
+          "deletedPrice": 79.99,
+          "discountHasStar": false,
+          "discountText": "10.- billiger",
+          "fromNormalPriceForLidlPlus": false,
+          "fromRecommendedPrice": false,
+          "hideBargainHint": false,
+          "bargainHintEnabled": false,
+          "bargainHintText": "Mega Schnäppchen",
+          "showDiscount": true,
+          "showFrom": false,
+          "showPercentage": true,
+          "showUpTo": false
+         },
+         "displayedCurrency": "€",
+         "endDate": "2026-10-28T22:59:59Z",
+         "endDateExclusive": "2026-10-28T23:00Z",
+         "hasStar": false,
+         "hasVat": true,
+         "oldPrice": 79.99,
+         "packaging": {
+          "text": "Je"
+         },
+         "price": 69.99,
+         "priceTheme": "white_red",
+         "specialTaxes": [],
+         "startDate": "2026-10-17T14:24:32.126Z",
+         "superscript": "*",
+         "variantsHaveDifferentPrices": false,
+         "priceLegendName": "*"
+        },
+        "lidlPlusText": "Mit Lidl Plus",
+        "highlightText": "10.- billiger",
+        "priceLegendName": "*"
+       },
+       "futureLidlPlusPrices": []
+      }
+     },
+     "ribbons": [],
+     "renderedTs": 1793055859,
+     "seals": [
+      {
+       "altText": "Goldenes Siegel mit der Zahl 2023",
+       "image": "https://www.lidl.at/assets/gcp6407e464f8944b318eb4ee2f2ba3d2aa.png"
+      }
+     ],
+     "stockAvailability": {
+      "availabilityIndicator": 0,
+      "badgeInfo": {
+       "badges": [
+        {
+         "text": "in der Filiale 27.10. - 28.10.",
+         "type": "IN_STORE_TODAY_DATE_RANGE"
+        }
+       ]
+      },
+      "badgeInfoV2": [
+       {
+        "badges": [
+         {
+          "text": "in der Filiale 27.10. - 28.10.",
+          "type": "IN_STORE_TODAY_DATE_RANGE"
+         }
+        ],
+        "validFrom": 1793055600,
+        "validUntil": 1793228399
+       }
+      ],
+      "onlineAvailable": false,
+      "minOrderableQuantity": 0,
+      "backInStockNotification": false,
+      "backInStockNotificationSoldOut": false
+     },
+     "store": true,
+     "storeStartDate": 1793055600,
+     "storeEndDate": 1793228399,
+     "title": "Benzin-Kettensäge",
+     "timezoneId": "Europe/Vienna",
+     "zones": {}
+    },
+    "productId": 11120164,
+    "meta": {
+     "categoryPaths": [],
+     "campaignPaths": [
+      [
+       {
+        "hiddenCategory": false,
+        "id": "10105592",
+        "name": "Parkside® Du packst das!",
+        "url": "/c/parkside-r-du-packst-das/a10105592"
+       }
+      ],
+      [
+       {
+        "hiddenCategory": false,
+        "id": "10105597",
+        "name": "Jetzt noch mehr sparen mit Lidl Plus",
+        "url": "/c/jetzt-noch-mehr-sparen-mit-lidl-plus/a10105597"
+       }
+      ]
+     ],
+     "fullTitle": "PARKSIDE Benzin-Kettensäge",
+     "retailLists": [
+      [
+       {
+        "id": 43671
+       },
+       {
+        "id": 38234
+       },
+       {
+        "id": 38236
+       }
+      ]
+     ],
+     "lists": [
+      43671,
+      38234,
+      38236
+     ],
+     "wonCategoryBreadcrumbs": [
+      [
+       {
+        "hiddenCategory": false,
+        "id": "10068222",
+        "name": "DIY & Garten",
+        "url": "/c/diy-garten/s10068222"
+       },
+       {
+        "hiddenCategory": false,
+        "id": "10067533",
+        "name": "Gartengeräte & Gartenwerkzeuge",
+        "url": "/h/gartengeraete-gartenwerkzeuge/h10067533"
+       }
+      ]
+     ],
+     "worldOfNeeds": [
+      {
+       "code": "1212",
+       "isMain": true,
+       "name": "Gartengeräte & Gartenwerkzeuge",
+       "parent": "12",
+       "superCategories": [
+        {
+         "code": "12",
+         "name": "Baumarkt & Garten",
+         "parent": "0"
+        },
+        {
+         "code": "0",
+         "name": "Bedürfniswelten",
+         "parent": ""
+        }
+       ]
+      }
+     ],
+     "preview": false
+    },
+    "action": "UPDATE",
+    "language": "de",
+    "eventType": "GRIDBOX",
+    "id": "11120164"
+   },
+   "tracking": {
+    "position": 191,
+    "xPayload": {
+     "searchTrackingMasterId": "Product.11120164",
+     "searchTrackingTitle": "Benzin-Kettens%C3%A4ge",
+     "searchTrackingPageSize": 60,
+     "searchTrackingPage": 4,
+     "searchTrackingEvent": "click",
+     "list": "search",
+     "searchTrackingId": "Product.11120164",
+     "searchTrackingOrigPos": 1,
+     "searchTrackingPos": 191,
+     "searchTrackingOrigPageSize": 60,
+     "searchTrackingChannel": "AT",
+     "category": "NonFood"
+    }
+   }
+  }
+ ]
+}
