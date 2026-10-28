@@ -75,18 +75,28 @@ class BillaFlyerText(private val http: Http) {
 
         private fun stem(unit: String) = Text.fold(unit.substringBefore('/')).take(3)
 
-        /** Index of the line where the offer's brand/name appears. A brand alone is enough - prices decide the rest. */
-        private fun anchor(page: FlyerPage, offer: Offer): Int? {
-            val tokens = offerTokens(offer)
+        /** Search words of an offer (name/brand tokens and the brand's own tokens), each prefixed with a space. */
+        private class Tokens(val all: List<String>, val brand: List<String>)
+
+        private fun tokensOf(offer: Offer) = Tokens(
+            offerTokens(offer).map { " $it" },
+            offer.brand?.let { Text.tokens(it).filter { t -> t.length > 2 } }.orEmpty().map { " $it" },
+        )
+
+        /**
+         * Index of the line where the offer's brand/name appears. A brand alone is enough - prices decide the rest.
+         * [folded] are the page lines as " folded text ", prepared once per page.
+         */
+        private fun anchor(folded: List<String>, t: Tokens): Int? {
+            val tokens = t.all
             if (tokens.isEmpty()) return null
-            val brand = offer.brand?.let { Text.tokens(it).filter { t -> t.length > 2 } }.orEmpty()
-            val folded = page.lines.map { " " + Text.fold(it) + " " }
+            val brand = t.brand
             var best: Int? = null
             var bestScore = 0
             for (i in folded.indices) {
-                if (tokens.none { folded[i].contains(" $it") }) continue
+                if (tokens.none { folded[i].contains(it) }) continue
                 val window = (i until minOf(i + 4, folded.size)).joinToString(" ") { folded[it] }
-                val score = tokens.count { window.contains(" $it") } + if (brand.isNotEmpty() && brand.all { window.contains(" $it") }) 1 else 0
+                val score = tokens.count { window.contains(it) } + if (brand.isNotEmpty() && brand.all { window.contains(it) }) 1 else 0
                 if (score > bestScore) {
                     best = i
                     bestScore = score
@@ -112,19 +122,25 @@ class BillaFlyerText(private val http: Http) {
         fun enrichAll(offers: List<Offer>, pages: List<FlyerPage>): List<Offer> {
             val result = offers.toMutableList()
             val done = mutableSetOf<Int>()
+            // Names do not change while conditions are added, so the words are prepared once per offer and page.
+            val tokens = HashMap<Int, Tokens>()
             for (page in pages) {
+                val folded = page.lines.map { " " + Text.fold(it) + " " }
                 // 1. Offers on this page and their price line ("1 FL. € 2.49" = normal price), each line used once.
                 val pairs = mutableListOf<Triple<Int, Int, Int>>() // offer index, ref line, distance
                 val refLines = page.lines.withIndex().mapNotNull { (i, l) -> reference.find(l)?.let { i to it } }
+                val refValues = refLines.mapNotNull { (li, m) -> num(m.groupValues[2])?.let { li to it } }
                 for ((oi, o) in result.withIndex()) {
                     if (o.chain != Chain.BILLA || oi in done) continue
                     if (o.banners.isNotEmpty() && page.banner !in o.banners) continue
                     val regular = o.regularPrice ?: continue
-                    val at = anchor(page, o) ?: continue
-                    for ((li, m) in refLines) {
-                        val v = num(m.groupValues[2]) ?: continue
+                    // Only a page with a price line equal to the normal price can hold the offer.
+                    val sameValue = refValues.filter { (_, v) -> abs(v - regular) < 0.005 }
+                    if (sameValue.isEmpty()) continue
+                    val at = anchor(folded, tokens.getOrPut(oi) { tokensOf(o) }) ?: continue
+                    for ((li, _) in sameValue) {
                         val d = abs(li - at)
-                        if (abs(v - regular) < 0.005 && d <= 25) pairs += Triple(oi, li, d)
+                        if (d <= 25) pairs += Triple(oi, li, d)
                     }
                 }
                 val refOf = mutableMapOf<Int, Ref>()

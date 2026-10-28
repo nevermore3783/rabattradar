@@ -137,7 +137,14 @@ Requirements: JDK 17+ and the Android SDK (compileSdk 36).
 ./gradlew :core:test                 # unit tests
 ./gradlew :app:assembleRelease       # app/build/outputs/apk/release/app-release.apk (R8-shrunk, ~2 MB)
 ./gradlew :cli:run --args="--zip 1010 --search milka --out /tmp/snapshot.json"   # live scrape on the desktop
+./gradlew :cli:run --args="--profile --cache /tmp/responses --out /tmp/a.json"   # request timeline + processing phases
 ```
+
+`--cache <dir>` records every response on the first run and replays it afterwards, so a code change can be checked for identical output (`--today 2026-10-28` pins the date).
+
+### Refresh speed
+
+A refresh makes about 35 requests. Pages of the same source (Lidl serves 60 items per request, BILLA 500) are loaded in parallel once the first page tells the total. A refresh used to spend most of its time on the CPU: the BILLA flyer matching re-normalised every flyer line for every BILLA offer, the merger re-tokenised both offers for each of ~2 million flyer/shop pairs, and `Text.fold` compiled a regex on each call. Matching now prepares each page and offer once and only compares offers that share a price. On a desktop JVM a refresh went from ~15 s to ~4 s, and the processing after the download from ~9 s to ~1 s (to 1/12 with a simple JIT, 1/25 interpreted - closer to a phone's first run). Recorded responses for Vienna and Innsbruck give byte-identical results before and after.
 
 The release APK is signed with the debug key so it can be side-loaded directly. GitHub Actions builds it on every push; download it from the run's artifacts. CI uses a fresh debug key per run, so uninstall the previous version before installing a new CI build.
 

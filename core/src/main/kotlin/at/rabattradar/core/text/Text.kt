@@ -9,7 +9,8 @@ object Text {
         "ä" to "a", "ö" to "o", "ü" to "u", "ß" to "ss",
         "ae" to "a", "oe" to "o", "ue" to "u",
     )
-    private val nonAlnum = Regex("[^a-z0-9]+")
+    private val marks = Regex("\\p{M}+")
+    private val price = Regex("(\\d+)[.,](\\d{1,2})")
     private val html = Regex("<[^>]+>")
     private val spaces = Regex("\\s+")
 
@@ -20,8 +21,21 @@ object Text {
     fun fold(input: String): String {
         var s = input.lowercase(Locale.GERMAN)
         for ((from, to) in germanFold) s = s.replace(from, to)
-        s = Normalizer.normalize(s, Normalizer.Form.NFD).replace(Regex("\\p{M}+"), "")
-        return nonAlnum.replace(s, " ").trim()
+        // Called for every word of every offer and flyer page: ASCII needs no accent stripping.
+        if (s.any { it.code >= 0x80 }) s = marks.replace(Normalizer.normalize(s, Normalizer.Form.NFD), "")
+        // Runs of anything but a-z/0-9 become one space, none at the ends.
+        val out = StringBuilder(s.length)
+        var gap = false
+        for (c in s) {
+            if (c in 'a'..'z' || c in '0'..'9') {
+                if (gap && out.isNotEmpty()) out.append(' ')
+                gap = false
+                out.append(c)
+            } else {
+                gap = true
+            }
+        }
+        return out.toString()
     }
 
     fun tokens(input: String): List<String> = fold(input).split(' ').filter { it.isNotEmpty() }
@@ -35,7 +49,7 @@ object Text {
 
     /** "1.99" -> 1.99, "1,99 €" -> 1.99. */
     fun parsePrice(input: String): Double? =
-        Regex("(\\d+)[.,](\\d{1,2})").find(input)?.let { m ->
+        price.find(input)?.let { m ->
             "${m.groupValues[1]}.${m.groupValues[2].padEnd(2, '0')}".toDoubleOrNull()
         }
 

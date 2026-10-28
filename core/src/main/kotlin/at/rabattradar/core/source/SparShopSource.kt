@@ -11,6 +11,9 @@ import at.rabattradar.core.net.Http
 import at.rabattradar.core.parse.Conditions
 import at.rabattradar.core.parse.Deposits
 import at.rabattradar.core.text.Text
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlin.math.roundToInt
@@ -24,19 +27,14 @@ class SparShopSource(private val http: Http) : OfferSource {
     override val id = SourceId.SPAR_SHOP
     override val chains = setOf(Chain.SPAR)
 
-    override suspend fun fetch(ctx: FetchContext): List<Offer> {
-        val hits = mutableListOf<JsonElement>()
-        var page = 1
-        while (page <= 10) {
-            val root = json.parseToJsonElement(
-                http.get("$SEARCH?query=*&q=*&page=$page&hitsPerPage=$PAGE&filter=is-on-promotion:true", emptyMap()),
-            )
-            hits += root["hits"].arr
-            val pageCount = root["paging"]["pageCount"].lng ?: 1
-            if (page >= pageCount) break
-            page++
-        }
-        return hits.mapNotNull { parse(it["masterValues"] ?: return@mapNotNull null) }.distinctBy { it.id }
+    override suspend fun fetch(ctx: FetchContext): List<Offer> = coroutineScope {
+        suspend fun page(n: Int) = json.parseToJsonElement(
+            http.get("$SEARCH?query=*&q=*&page=$n&hitsPerPage=$PAGE&filter=is-on-promotion:true", emptyMap()),
+        )
+        val first = page(1)
+        val pageCount = minOf(10, (first["paging"]["pageCount"].lng ?: 1).toInt())
+        val hits = first["hits"].arr + (2..pageCount).map { n -> async { page(n)["hits"].arr } }.awaitAll().flatten()
+        hits.mapNotNull { parse(it["masterValues"] ?: return@mapNotNull null) }.distinctBy { it.id }
     }
 
     private fun JsonElement?.first(): String? = ((this as? JsonArray)?.firstOrNull() ?: this).str

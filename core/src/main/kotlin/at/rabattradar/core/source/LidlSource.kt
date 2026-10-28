@@ -12,6 +12,9 @@ import at.rabattradar.core.net.Http
 import at.rabattradar.core.parse.Conditions
 import at.rabattradar.core.parse.Deposits
 import at.rabattradar.core.text.Text
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.JsonElement
 import kotlin.math.roundToInt
 
@@ -24,20 +27,18 @@ class LidlSource(private val http: Http) : OfferSource {
     override val id = SourceId.LIDL_WEB
     override val chains = setOf(Chain.LIDL)
 
-    override suspend fun fetch(ctx: FetchContext): List<Offer> {
-        val items = mutableListOf<JsonElement>()
-        var offset = 0
-        while (offset < 3000) {
-            val root = json.parseToJsonElement(
-                http.get("$BASE/q/api/search?q=*&offset=$offset&fetchsize=$PAGE&locale=de_AT&assortment=AT&version=v2.0.0", emptyMap()),
-            )
-            val batch = root["items"].arr
-            items += batch
-            offset += batch.size
-            val total = root["numFound"].lng ?: 0
-            if (batch.isEmpty() || offset >= total) break
+    override suspend fun fetch(ctx: FetchContext): List<Offer> = coroutineScope {
+        suspend fun page(offset: Int) = json.parseToJsonElement(
+            http.get("$BASE/q/api/search?q=*&offset=$offset&fetchsize=$PAGE&locale=de_AT&assortment=AT&version=v2.0.0", emptyMap()),
+        )
+        val first = page(0)
+        val batch = first["items"].arr
+        val total = (first["numFound"].lng ?: 0).toInt()
+        // The API returns at most 60 items per request, so the remaining pages are loaded at the same time.
+        val rest = if (batch.isEmpty()) emptyList() else {
+            (batch.size until minOf(total, MAX_ITEMS) step batch.size).map { offset -> async { page(offset)["items"].arr } }.awaitAll().flatten()
         }
-        return items.mapNotNull { parse(it) }.distinctBy { it.id }
+        (batch + rest).mapNotNull { parse(it) }.distinctBy { it.id }
     }
 
     internal fun parse(item: JsonElement): Offer? {
@@ -105,7 +106,7 @@ class LidlSource(private val http: Http) : OfferSource {
             name = title,
             brand = brand,
             description = description,
-            quantity = packaging?.replace(Regex("^(Je|Bei \\d+ Stk\\. je|Ab \\d+ Stk\\. je)\\s*", RegexOption.IGNORE_CASE), "")?.takeIf { it.isNotBlank() },
+            quantity = packaging?.replace(packagingPrefix, "")?.takeIf { it.isNotBlank() },
             category = category,
             price = headline,
             regularPrice = regular,
@@ -124,5 +125,7 @@ class LidlSource(private val http: Http) : OfferSource {
     companion object {
         const val BASE = "https://www.lidl.at"
         const val PAGE = 60
+        private const val MAX_ITEMS = 3000
+        private val packagingPrefix = Regex("^(Je|Bei \\d+ Stk\\. je|Ab \\d+ Stk\\. je)\\s*", RegexOption.IGNORE_CASE)
     }
 }

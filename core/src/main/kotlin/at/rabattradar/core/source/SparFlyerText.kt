@@ -215,7 +215,9 @@ class SparFlyerText(private val http: Http) {
             val price: Double, val regular: Double,
         )
 
-        private fun money(s: String): Double? = s.replace(Regex("\\s"), "").replace(',', '.').toDoubleOrNull()
+        private val space = Regex("\\s")
+
+        private fun money(s: String): Double? = s.replace(space, "").replace(',', '.').toDoubleOrNull()
 
         private fun offerTokens(o: Offer): List<String> =
             Text.tokens("${o.brand.orEmpty()} ${o.name}").filter { it.length > 2 && it !in stopWords }.distinct()
@@ -225,50 +227,77 @@ class SparFlyerText(private val http: Http) {
 
         /** The offer price printed somewhere around the block. */
         private fun priceNear(text: String, b: Block, price: Double): Boolean =
-            Regex(printed(price)).containsMatchIn(text.substring(max(0, b.start - 300), min(text.length, b.end + 300)))
+            priceRegex.getOrPut((price * 100).roundToInt()) { Regex(printed(price)) }
+                .containsMatchIn(text.substring(max(0, b.start - 300), min(text.length, b.end + 300)))
+
+        /** Compiled price patterns - the same few hundred prices are looked up for every offer. */
+        private val priceRegex = java.util.concurrent.ConcurrentHashMap<Int, Regex>()
 
         /** Adds the multi-buy / minimum quantity printed in the SPAR-group flyers to the SPAR offers that lack it. */
         fun enrichAll(offers: List<Offer>, pages: List<FlyerPage>): List<Offer> {
             if (pages.isEmpty()) return offers
-            val parsed = pages.map { p -> Page(p, p.lines.joinToString(" ").replace(Regex("\\s+"), " ")) }
-            return offers.map { o -> if (o.chain == Chain.SPAR && !hasQuantityCondition(o)) enrich(o, parsed) ?: o else o }
+            val flyers = Flyers(pages.map { p -> Page(p, p.lines.joinToString(" ").replace(Regex("\\s+"), " ")) })
+            return offers.map { o -> if (o.chain == Chain.SPAR && !hasQuantityCondition(o)) enrich(o, flyers) ?: o else o }
         }
 
-        private fun enrich(o: Offer, pages: List<Page>): Offer? {
+        /** All pages, with their price blocks indexed by single price and by "je" price. */
+        private class Flyers(val pages: List<Page>) {
+            private val all = pages.flatMap { p -> p.blocks.map { p to it } }
+            private val byRegular = HashMap<Int, MutableList<Int>>()
+            private val byDeal = HashMap<Int, MutableList<Int>>()
+
+            init {
+                all.forEachIndexed { i, (_, b) ->
+                    b.regulars.map(::cents).distinct().forEach { byRegular.getOrPut(it) { mutableListOf() } += i }
+                    b.deal?.let { byDeal.getOrPut(cents(it)) { mutableListOf() } += i }
+                }
+            }
+
+            /** Blocks with the normal price (or, without one, the "je" price) within a cent, in page order. */
+            fun near(regular: Double?, price: Double): List<Pair<Page, Block>> {
+                val index = if (regular != null) byRegular else byDeal
+                val c = cents(regular ?: price)
+                val ids = java.util.TreeSet<Int>()
+                for (d in -1..1) index[c + d]?.let(ids::addAll)
+                return ids.map { all[it] }
+            }
+
+            private fun cents(price: Double) = (price * 100).roundToInt()
+        }
+
+        private fun enrich(o: Offer, flyers: Flyers): Offer? {
             val tokens = offerTokens(o).ifEmpty { return null }
-            best(o, o.price, tokens, pages)?.let { return apply(o, it) }
+            best(o, o.price, tokens, flyers)?.let { return apply(o, it) }
             // "Mit SPAR-App-Gutschein -50%": the headline is the voucher price, the multi-buy applies without the voucher.
             for (tier in o.tiers.filter { it.kind == TierKind.WITHOUT }) {
-                best(o, tier.price, tokens, pages)?.let { return applyWithout(o, it, tier) }
+                best(o, tier.price, tokens, flyers)?.let { return applyWithout(o, it, tier) }
             }
             // A guessed "2+1 gratis?" that the flyer prints as a plain reduction ("statt 7,49 4,99").
-            if (o.conditions.any { it.inferred && it.type == ConditionType.MULTI_BUY } && plainReduction(o, tokens, pages)) {
+            if (o.conditions.any { it.inferred && it.type == ConditionType.MULTI_BUY } && plainReduction(o, tokens, flyers.pages)) {
                 return o.copy(conditions = o.conditions.filterNot { it.inferred && it.type == ConditionType.MULTI_BUY })
             }
             return null
         }
 
         /** Price block for [price], with the product named close by. */
-        private fun best(o: Offer, price: Double, tokens: List<String>, pages: List<Page>): Match? {
+        private fun best(o: Offer, price: Double, tokens: List<String>, flyers: Flyers): Match? {
             var best: Match? = null
-            for (p in pages) {
-                for (b in p.blocks) {
-                    // Offers without a normal price are matched by their promo price after "je" instead.
-                    val regular = o.regularPrice?.takeIf { r -> b.regulars.any { abs(it - r) < 0.005 } }
-                        ?: b.regulars.firstOrNull()?.takeIf { o.regularPrice == null && b.deal != null && abs(b.deal - price) < 0.005 }
-                        ?: continue
-                    if (regular <= price) continue
-                    val label = p.labels
-                        .filter { abs(it.pos - b.start) <= 300 && it.buy + it.free == b.n && abs(price * b.n - regular * it.buy) <= 0.012 * b.n }
-                        .minByOrNull { abs(it.pos - b.start) }
-                    val priceFits = if (b.deal != null) abs(b.deal - price) < 0.005 else label != null || priceNear(p.text, b, price)
-                    if (!priceFits || (o.regularPrice == null && label == null)) continue
-                    // Two-column layouts put neighbours next to each other - the product itself must be named close by.
-                    val score = nameScore(p.text, b.start - 350, b.end + 150, tokens)
-                    if (score == 0) continue
-                    val m = Match(p, b, label, score, p.page.banner in o.banners, price, regular)
-                    if (best == null || better(m, best)) best = m
-                }
+            for ((p, b) in flyers.near(o.regularPrice, price)) {
+                // Offers without a normal price are matched by their promo price after "je" instead.
+                val regular = o.regularPrice?.takeIf { r -> b.regulars.any { abs(it - r) < 0.005 } }
+                    ?: b.regulars.firstOrNull()?.takeIf { o.regularPrice == null && b.deal != null && abs(b.deal - price) < 0.005 }
+                    ?: continue
+                if (regular <= price) continue
+                val label = p.labels
+                    .filter { abs(it.pos - b.start) <= 300 && it.buy + it.free == b.n && abs(price * b.n - regular * it.buy) <= 0.012 * b.n }
+                    .minByOrNull { abs(it.pos - b.start) }
+                val priceFits = if (b.deal != null) abs(b.deal - price) < 0.005 else label != null || priceNear(p.text, b, price)
+                if (!priceFits || (o.regularPrice == null && label == null)) continue
+                // Two-column layouts put neighbours next to each other - the product itself must be named close by.
+                val score = nameScore(p.text, b.start - 350, b.end + 150, tokens)
+                if (score == 0) continue
+                val m = Match(p, b, label, score, p.page.banner in o.banners, price, regular)
+                if (best == null || better(m, best)) best = m
             }
             return best
         }

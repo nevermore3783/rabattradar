@@ -10,6 +10,9 @@ import at.rabattradar.core.search.OfferQuery
 import at.rabattradar.core.search.ValidityFilter
 import at.rabattradar.core.source.FetchContext
 import at.rabattradar.core.text.euro
+import at.rabattradar.core.net.Http
+import at.rabattradar.core.net.OkHttp
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -18,11 +21,24 @@ import java.io.File
  * Live scrape from the command line - useful to check the scrapers without a phone:
  *
  *   ./gradlew :cli:run --args="--zip 1010 --out offers.json --search milka"
+ *
+ * `--profile` prints every request and the processing phases; `--cache <dir>` records the responses on the
+ * first run and replays them afterwards (to compare code changes on identical input).
  */
-fun main(args: Array<String>): Unit = runBlocking {
+fun main(args: Array<String>): Unit = runBlocking(Dispatchers.Default) {
     fun opt(name: String) = args.indexOf(name).takeIf { it >= 0 }?.let { args.getOrNull(it + 1) }
-    val ctx = FetchContext(zipCode = opt("--zip") ?: "1010")
-    val snapshot = Aggregator.default().fetch(ctx)
+    val ctx = FetchContext(zipCode = opt("--zip") ?: "1010", today = opt("--today")?.let(java.time.LocalDate::parse) ?: FetchContext().today)
+    val profile = "--profile" in args
+    var http: Http = OkHttp()
+    opt("--cache")?.let { http = DevHttp.Cached(http, File(it)) }
+    val recording = DevHttp.Recording(http).takeIf { profile }
+    val start = System.currentTimeMillis()
+    val snapshot = Aggregator.default(recording ?: http, log = if (profile) { msg -> println("  [${System.currentTimeMillis() - start} ms] $msg") } else { _ -> })
+        .fetch(ctx)
+    if (profile) {
+        recording?.print()
+        println("\nGesamt: ${System.currentTimeMillis() - start} ms\n")
+    }
 
     println("Quellen:")
     snapshot.statuses.forEach { s ->

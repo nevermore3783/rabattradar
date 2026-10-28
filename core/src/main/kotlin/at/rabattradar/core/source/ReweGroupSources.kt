@@ -13,6 +13,9 @@ import at.rabattradar.core.net.Http
 import at.rabattradar.core.parse.Conditions
 import at.rabattradar.core.parse.Deposits
 import at.rabattradar.core.text.Text
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.JsonElement
 import java.time.LocalDate
 import java.util.Locale
@@ -142,18 +145,15 @@ internal object ReweProducts {
         ).withDeposit(depositInfo)
     }
 
-    suspend fun fetchAll(http: Http, url: (page: Int) -> String): List<JsonElement> {
-        val out = mutableListOf<JsonElement>()
-        var page = 0
-        while (page < 50) {
-            val root = json.parseToJsonElement(http.get(url(page), emptyMap()))
-            val results = root["results"].arr
-            out += results
-            val total = root["total"].lng ?: 0
-            if (results.isEmpty() || out.size >= total) break
-            page++
-        }
-        return out
+    /** All pages; the first one tells how many there are, the others are loaded at the same time. */
+    suspend fun fetchAll(http: Http, url: (page: Int) -> String): List<JsonElement> = coroutineScope {
+        val first = json.parseToJsonElement(http.get(url(0), emptyMap()))
+        val results = first["results"].arr
+        val total = first["total"].lng ?: 0
+        if (results.isEmpty() || results.size >= total) return@coroutineScope results
+        val pages = minOf(50L, (total + results.size - 1) / results.size).toInt()
+        results + (1 until pages).map { page -> async { json.parseToJsonElement(http.get(url(page), emptyMap()))["results"].arr } }
+            .awaitAll().flatten()
     }
 }
 

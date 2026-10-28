@@ -84,10 +84,8 @@ class MarktguruSource(
         Keys(api, client).also(keyStore::save)
     }
 
-    private suspend fun search(term: String, zip: String): List<JsonElement> {
-        val out = mutableListOf<JsonElement>()
-        var offset = 0
-        while (true) {
+    private suspend fun search(term: String, zip: String): List<JsonElement> = coroutineScope {
+        suspend fun page(offset: Int): JsonElement {
             val url = "$SEARCH?as=web&q=${URLEncoder.encode(term, "UTF-8")}&zipCode=$zip&limit=$PAGE&offset=$offset"
             val body = try {
                 getWithKeys(url, keys(force = false))
@@ -95,14 +93,16 @@ class MarktguruSource(
                 if (e.code != 401 && e.code != 403) throw e
                 getWithKeys(url, keys(force = true))
             }
-            val root = json.parseToJsonElement(body)
-            val batch = root["results"].arr
-            out += batch
-            offset += batch.size
-            val total = root["totalResults"].lng ?: 0
-            if (batch.isEmpty() || offset >= total) break
+            return json.parseToJsonElement(body)
         }
-        return out
+        val first = page(0)
+        val batch = first["results"].arr
+        val total = (first["totalResults"].lng ?: 0).toInt()
+        // Further pages (rare: more than 1000 offers) are loaded at the same time.
+        val rest = if (batch.isEmpty()) emptyList() else {
+            (batch.size until total step batch.size).map { offset -> async { page(offset)["results"].arr } }.awaitAll().flatten()
+        }
+        batch + rest
     }
 
     private suspend fun getWithKeys(url: String, keys: Keys) =

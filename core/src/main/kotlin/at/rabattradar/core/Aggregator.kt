@@ -45,6 +45,8 @@ class Aggregator(
     private val sources: List<OfferSource>,
     private val billaFlyer: BillaFlyerText? = null,
     private val sparFlyer: SparFlyerText? = null,
+    /** Progress messages ("merged", "BILLA_FLYER enriched") for profiling. */
+    private val log: (String) -> Unit = {},
 ) {
 
     /** Flyer text that adds conditions to the merged offers; loading its pages fails as a whole. */
@@ -68,6 +70,7 @@ class Aggregator(
                     val start = System.currentTimeMillis()
                     try {
                         val offers = if (source is MarktguruSource) source.fetch(ctx, chains) else source.fetch(ctx)
+                        log("${source.id} fetched and parsed: ${offers.size}")
                         offers to SourceStatus(source.id, true, offers.size, null, System.currentTimeMillis() - start)
                     } catch (e: CancellationException) {
                         throw e
@@ -82,7 +85,7 @@ class Aggregator(
                 FlyerJob(id, async {
                     val start = System.currentTimeMillis()
                     try {
-                        FlyerResult(pages(), null, System.currentTimeMillis() - start)
+                        FlyerResult(pages(), null, System.currentTimeMillis() - start).also { log("$id pages loaded: ${it.pages.size}") }
                     } catch (e: CancellationException) {
                         throw e
                     } catch (e: Exception) {
@@ -105,7 +108,9 @@ class Aggregator(
 
         val results = jobs.values.awaitAll()
         val all = results.flatMap { it.first }.filter { it.chain in chains && !it.isExpired(ctx.today) }
+        log("all sources done")
         var offers = OfferMerger.merge(all)
+        log("merged: ${offers.size}")
         val statuses = results.map { it.second }.toMutableList()
 
         for (job in flyerJobs) {
@@ -117,6 +122,7 @@ class Aggregator(
             val before = offers
             offers = job.enrich(offers, r.pages)
             val enriched = offers.indices.count { offers[it] !== before[it] }
+            log("${job.id} enriched: $enriched")
             statuses += SourceStatus(job.id, r.pages.isNotEmpty(), enriched, if (r.pages.isEmpty()) "Kein Flugblatt-Text gefunden" else null, r.millis)
         }
         Snapshot(
@@ -131,6 +137,7 @@ class Aggregator(
         fun default(
             http: Http = OkHttp(),
             keyStore: MarktguruSource.KeyStore = MarktguruSource.KeyStore.InMemory(),
+            log: (String) -> Unit = {},
         ) = Aggregator(
             listOf(
                 MarktguruSource(http, keyStore),
@@ -141,6 +148,7 @@ class Aggregator(
             ),
             BillaFlyerText(http),
             SparFlyerText(http),
+            log,
         )
     }
 }

@@ -35,10 +35,23 @@ object OfferMerger {
         val result = primary.associateBy { it.id }.toMutableMap()
         val unmatched = mutableListOf<Offer>()
         val primaryByChain = primary.groupBy { it.chain }
+        // Every flyer offer is scored against every shop offer of its chain: prepare prices and words once.
+        val keys = java.util.IdentityHashMap<Offer, Key>()
+        fun key(o: Offer) = keys.getOrPut(o) { Key(o) }
+
+        // A match needs a common price (within a cent), so only shop offers near one of the flyer prices are scored.
+        val byCents = primaryByChain.mapValues { (_, shops) ->
+            val index = HashMap<Long, MutableList<Int>>()
+            shops.forEachIndexed { i, o -> key(o).prices.forEach { p -> index.getOrPut(cents(p)) { mutableListOf() } += i } }
+            index
+        }
 
         for (f in flyerDeduped) {
-            val candidates = primaryByChain[f.chain].orEmpty()
-                .map { it to score(f, it) }
+            val shops = primaryByChain[f.chain].orEmpty()
+            val near = java.util.TreeSet<Int>() // keeps the shop order, so equal scores rank as before
+            byCents[f.chain]?.let { index -> key(f).prices.forEach { p -> for (d in -2L..2L) index[cents(p) + d]?.let(near::addAll) } }
+            val candidates = near.map { shops[it] }
+                .map { it to score(key(f), key(it)) }
                 .filter { it.second >= MIN_SCORE }
                 .sortedByDescending { it.second }
             if (candidates.isEmpty()) {
@@ -101,17 +114,29 @@ object OfferMerger {
     private fun prices(o: Offer): Set<Double> =
         (listOf(o.price) + o.tiers.filter { it.kind == TierKind.WITHOUT }.map { it.price }).toSet()
 
+    private fun cents(price: Double) = Math.round(price * 100)
+
+    /** An offer with its match prices and name words. */
+    private class Key(val offer: Offer) {
+        val prices = prices(offer)
+        val words by lazy(LazyThreadSafetyMode.NONE) { tokens(offer) }
+    }
+
     /** 0..1 similarity, 0 if prices or dates rule a match out. */
-    fun score(flyer: Offer, shop: Offer): Double {
+    fun score(flyer: Offer, shop: Offer): Double = score(Key(flyer), Key(shop))
+
+    private fun score(fk: Key, sk: Key): Double {
+        val flyer = fk.offer
+        val shop = sk.offer
         if (flyer.chain != shop.chain) return 0.0
-        val fp = prices(flyer)
-        val sp = prices(shop)
+        val fp = fk.prices
+        val sp = sk.prices
         if (fp.none { a -> sp.any { b -> abs(a - b) < 0.011 } }) return 0.0
         if (flyer.validFrom != null && flyer.validTo != null && shop.validFrom != null && shop.validTo != null) {
             if (flyer.validTo.isBefore(shop.validFrom) || shop.validTo.isBefore(flyer.validFrom)) return 0.0
         }
-        val a = tokens(flyer)
-        val b = tokens(shop)
+        val a = fk.words
+        val b = sk.words
         if (a.isEmpty() || b.isEmpty()) return 0.0
         val common = a.count { x -> b.any { y -> x == y || (minOf(x.length, y.length) >= 4 && (x.startsWith(y) || y.startsWith(x))) } }
         return common.toDouble() / minOf(a.size, b.size)

@@ -117,10 +117,12 @@ object Conditions {
         "gl" to "Glas", "tfl" to "Tafel", "be" to "Becher", "träger" to "Träger",
     )
 
+    private val packUnit = Regex("\\d+er-.*")
+
     fun singularUnit(raw: String): String {
         val w = raw.trimEnd('.').lowercase()
         unitMap[w]?.let { return it }
-        if (Regex("\\d+er-.*").matches(w)) return raw.trimEnd('.').substringAfter('-').replaceFirstChar { it.uppercase() }
+        if (packUnit.matches(w)) return raw.trimEnd('.').substringAfter('-').replaceFirstChar { it.uppercase() }
         return raw.trimEnd('.').replaceFirstChar { it.uppercase() }
     }
 
